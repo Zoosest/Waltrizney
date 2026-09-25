@@ -1,8 +1,11 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rizney Music Archive</title>  <style>
+  <title>Rizney Music Archive</title>
+
+  <style>
     :root {
       --black:#000;
       --panel:#120b18;
@@ -28,10 +31,12 @@
       font-family:Georgia,"Times New Roman",serif
     }
 
+    /* TIGHT HEADER */
     .top-area {
       position:relative;
-      padding:10px 14px 18px;
-      text-align:center
+      padding:8px 14px 8px;
+      text-align:center;
+      min-height:70px
     }
 
     .donate {
@@ -61,26 +66,20 @@
       text-decoration:none
     }
 
+    /* LARGER RIZNEY IMAGE */
     .logo-img {
       position:absolute;
-      top:10px;
-      right:10px;
-      max-height:40px;
-      max-width:80px;
+      top:5px;
+      right:8px;
+      width:110px;
+      height:60px;
       object-fit:contain
     }
 
-    h1 {
-      margin:4px 0 0;
-      color:var(--bright-gold);
-      font-size:1.55rem;
-      letter-spacing:.08em
-    }
-
+    /* No Mix'N'Mojo text in header */
+    h1,
     .tagline {
-      margin-top:6px;
-      color:var(--muted);
-      font-size:.78rem
+      display:none
     }
 
     .player-dock {
@@ -253,22 +252,28 @@
       font-size:.78rem
     }
 
+    /* TIGHT FOOTER + LARGE CURSE IMAGE */
     footer {
-      margin-top:40px;
-      padding:20px;
+      margin-top:10px;
+      padding:3px 0 5px;
       text-align:center;
       border-top:1px solid var(--gold)
     }
 
     footer img {
-      max-height:80px;
-      object-fit:contain;
-      margin-top:15px
+      display:block;
+      width:160px;
+      height:160px;
+      max-width:80%;
+      margin:2px auto 0;
+      object-fit:contain
     }
 
     @media(max-width:500px) {
+
       .top-area {
-        padding-top:42px
+        padding:5px 8px 6px;
+        min-height:62px
       }
 
       .donate {
@@ -281,13 +286,10 @@
       }
 
       .logo-img {
-        top:8px;
-        right:8px;
-        max-height:35px
-      }
-
-      h1 {
-        font-size:1.35rem
+        top:3px;
+        right:5px;
+        width:95px;
+        height:54px
       }
 
       .controls {
@@ -320,39 +322,129 @@
       .song-title {
         font-size:.82rem
       }
-    }
-  </style></head><body>  <section class="top-area">
-    <a class="donate" href="https://venmo.com/u/YOUR_VENMO_USERNAME" target="_blank" rel="noopener">♥ Donate</a><a class="context" href="context.html">✦ Context</a>
-<img src="./assets/rizney.png" alt="Rizney" class="logo-img" />
-<h1>✦ Mix'N'Mojo ✦</h1>
-<div class="tagline">Mix'N'Mojo</div>
 
-  </section>  <section class="player-dock">
+      footer {
+        margin-top:6px;
+        padding:2px 0 4px
+      }
+
+      footer img {
+        width:140px;
+        height:140px;
+        margin:1px auto 0
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <section class="top-area">
+
+    <a
+      class="donate"
+      href="https://venmo.com/u/YOUR_VENMO_USERNAME"
+      target="_blank"
+      rel="noopener"
+    >♥ Donate</a>
+
+    <a
+      class="context"
+      href="context.html"
+    >✦ Context</a>
+
+    <img
+      src="./assets/rizney.png"
+      alt="Rizney"
+      class="logo-img"
+    />
+
+  </section>
+
+  <section class="player-dock">
+
     <div class="player-wrap">
       <div id="player"></div>
-    </div><div id="now-playing">Now playing: MEGA MIX'N'MOJO Intro</div>
+    </div>
 
-  </section>  <nav class="controls" aria-label="Music controls">
-    <button id="previous-song" class="skip" type="button" aria-label="Previous song">«</button>
-    <button id="random-song" type="button">Random</button>
-    <button id="whack-track" type="button">Whack-A-Track</button>
-    <button id="draw-cards" type="button">CARDS</button>
-    <button id="next-song" class="skip" type="button" aria-label="Next song">»</button>
-  </nav>  <main>
-    <p class="intro">Browse the collection in order, or let the cards choose a song for you.</p><section id="reading" hidden>
-   <h2>Your Music Reading</h2>
-   <div id="cards"></div>
-</section>
+    <div id="now-playing">
+      Now playing: MEGA MIX'N'MOJO Intro
+    </div>
 
-<section>
-   <h2>Chronological</h2>
-   <div id="song-list"></div>
-</section>
+  </section>
 
-  </main>  <footer>
-    <img src="./assets/curse.png" alt="Curse" />
-  </footer>  <script src="https://www.youtube.com/iframe_api"></script>  <script>
+  <nav class="controls" aria-label="Music controls">
+
+    <button
+      id="previous-song"
+      class="skip"
+      type="button"
+      aria-label="Previous song"
+    >«</button>
+
+    <button
+      id="random-song"
+      type="button"
+    >Random</button>
+
+    <button
+      id="whack-track"
+      type="button"
+    >Whack-A-Track</button>
+
+    <button
+      id="draw-cards"
+      type="button"
+    >CARDS</button>
+
+    <button
+      id="next-song"
+      class="skip"
+      type="button"
+      aria-label="Next song"
+    >»</button>
+
+  </nav>
+
+  <main>
+
+    <p class="intro">
+      Browse the collection in order, or let the cards choose a song for you.
+    </p>
+
+    <section id="reading" hidden>
+
+      <h2>Your Music Reading</h2>
+
+      <div id="cards"></div>
+
+    </section>
+
+    <section>
+
+      <h2>Chronological</h2>
+
+      <div id="song-list"></div>
+
+    </section>
+
+  </main>
+
+  <footer>
+
+    <img
+      src="./assets/curse.png"
+      alt="Curse"
+    />
+
+  </footer>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+
+  <script>
+
     // EDIT YOUR SONGS HERE. Keep one YouTube URL on each line.
+
     const songs = [
       'https://youtube.com/shorts/mkKOtZPLkzY',
       'https://youtu.be/K2Dujl_bFZg',
@@ -534,10 +626,15 @@
     ];
 
     const ids = songs
-      .map(url => url.match(/(?:youtu\.be\/|shorts\/|watch\?v=)([^?&/]+)/)?.[1])
+      .map(url =>
+        url.match(
+          /(?:youtu\.be\/|shorts\/|watch\?v=)([^?&/]+)/
+        )?.[1]
+      )
       .filter(Boolean);
 
     const $ = s => document.querySelector(s);
+
     const nowPlaying = $('#now-playing');
     const list = $('#song-list');
     const cards = $('#cards');
@@ -568,10 +665,14 @@
       if (!ids[index]) return;
 
       currentIndex = index;
-      nowPlaying.textContent = `Now playing: ${titleFor(index)}`;
+
+      nowPlaying.textContent =
+        `Now playing: ${titleFor(index)}`;
 
       if (player) {
-        player.loadVideoById({ videoId: ids[index] });
+        player.loadVideoById({
+          videoId: ids[index]
+        });
       }
 
       updateButtons();
@@ -583,7 +684,10 @@
     }
 
     function playPosition(position) {
-      if (!cardPlaylist || cardPlaylist[position] === undefined) return;
+      if (
+        !cardPlaylist ||
+        cardPlaylist[position] === undefined
+      ) return;
 
       cardPosition = position;
       currentIndex = cardPlaylist[position];
@@ -601,14 +705,19 @@
     }
 
     function next() {
+
       if (cardPlaylist !== null) {
+
         if (cardPosition < cardPlaylist.length - 1) {
           return playPosition(cardPosition + 1);
         }
 
         cardPlaylist = null;
         cardPosition = 0;
-        nowPlaying.textContent = 'Music reading complete ✦';
+
+        nowPlaying.textContent =
+          'Music reading complete ✦';
+
         updateButtons();
         return;
       }
@@ -624,10 +733,13 @@
     }
 
     function previous() {
+
       if (cardPlaylist !== null) {
+
         if (cardPosition > 0) {
           playPosition(cardPosition - 1);
         }
+
         return;
       }
 
@@ -637,95 +749,172 @@
     }
 
     window.onYouTubeIframeAPIReady = () => {
+
       player = new YT.Player('player', {
+
         videoId: ids[0],
+
         playerVars: {
           autoplay: 0,
           rel: 0,
           modestbranding: 1,
           playsinline: 1
         },
+
         events: {
+
           onReady: () => {
             window.rizneyPlayer = player;
             updateButtons();
           },
+
           onStateChange: e => {
-            if (e.data === YT.PlayerState.ENDED) {
+
+            if (
+              e.data === YT.PlayerState.ENDED
+            ) {
               next();
             }
+
           }
+
         }
+
       });
 
       window.rizneyPlayer = player;
     };
 
     ids.forEach((id, index) => {
-      const row = document.createElement('article');
+
+      const row =
+        document.createElement('article');
 
       row.className = 'song';
 
       row.innerHTML = `
-        <span class="song-number">${index + 1}</span>
+        <span class="song-number">
+          ${index + 1}
+        </span>
+
         <span class="song-title">
           ♫ ${titleFor(index)}
-          <small>YouTube video • chronological position ${index + 1}</small>
+
+          <small>
+            YouTube video • chronological position ${index + 1}
+          </small>
         </span>
-        <button class="play" type="button">Play</button>
+
+        <button
+          class="play"
+          type="button"
+        >
+          Play
+        </button>
       `;
 
       row.querySelector('button').onclick = () => {
+
         cardPlaylist = null;
         cardPosition = 0;
+
         play(index);
+
       };
 
       list.appendChild(row);
+
     });
 
     $('#random-song').onclick = () => {
+
       cardPlaylist = null;
       cardPosition = 0;
-      play(Math.floor(Math.random() * ids.length));
+
+      play(
+        Math.floor(
+          Math.random() * ids.length
+        )
+      );
+
     };
 
     previousButton.onclick = previous;
     nextButton.onclick = next;
 
     $('#draw-cards').onclick = () => {
+
       cardPlaylist = [...ids.keys()]
         .sort(() => Math.random() - 0.5)
-        .slice(0, Math.min(6, ids.length));
+        .slice(
+          0,
+          Math.min(6, ids.length)
+        );
 
       cardPosition = 0;
+
       reading.hidden = false;
+
       cards.innerHTML = '';
 
-      ['✦','✧','✩','✹','✺','✷']
-        .slice(0, cardPlaylist.length)
-        .forEach((symbol, position) => {
-          const card = document.createElement('article');
+      [
+        '✦',
+        '✧',
+        '✩',
+        '✹',
+        '✺',
+        '✷'
+      ]
+        .slice(
+          0,
+          cardPlaylist.length
+        )
+        .forEach(
+          (symbol, position) => {
 
-          card.className = 'card';
+            const card =
+              document.createElement('article');
 
-          card.innerHTML = `
-            <span class="symbol">${symbol}</span>
-            <strong>Reading ${position + 1}</strong>
-            <a href="#">Play song ${cardPlaylist[position] + 1}</a>
-          `;
+            card.className = 'card';
 
-          card.querySelector('a').onclick = e => {
-            e.preventDefault();
-            playPosition(position);
-          };
+            card.innerHTML = `
+              <span class="symbol">
+                ${symbol}
+              </span>
 
-          cards.appendChild(card);
-        });
+              <strong>
+                Reading ${position + 1}
+              </strong>
+
+              <a href="#">
+                Play song ${cardPlaylist[position] + 1}
+              </a>
+            `;
+
+            card.querySelector('a').onclick =
+              e => {
+
+                e.preventDefault();
+
+                playPosition(position);
+
+              };
+
+            cards.appendChild(card);
+
+          }
+        );
 
       updateButtons();
+
     };
 
     updateButtons();
-  </script>  <script src="./main.js"></script>  <script src="./whack-a-track.js"></script></body>
+
+  </script>
+
+  <script src="./main.js"></script>
+  <script src="./whack-a-track.js"></script>
+
+</body>
 </html>

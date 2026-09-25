@@ -61,6 +61,15 @@
       text-decoration:none
     }
 
+    .logo-img {
+      position:absolute;
+      top:10px;
+      right:10px;
+      max-height:40px;
+      max-width:80px;
+      object-fit:contain
+    }
+
     h1 {
       margin:4px 0 0;
       color:var(--bright-gold);
@@ -244,6 +253,19 @@
       font-size:.78rem
     }
 
+    footer {
+      margin-top:40px;
+      padding:20px;
+      text-align:center;
+      border-top:1px solid var(--gold)
+    }
+
+    footer img {
+      max-height:80px;
+      object-fit:contain;
+      margin-top:15px
+    }
+
     @media(max-width:500px) {
       .top-area {
         padding-top:42px
@@ -256,6 +278,12 @@
 
       .context {
         top:8px
+      }
+
+      .logo-img {
+        top:8px;
+        right:8px;
+        max-height:35px
       }
 
       h1 {
@@ -295,8 +323,8 @@
     }
   </style></head><body>  <section class="top-area">
     <a class="donate" href="https://venmo.com/u/YOUR_VENMO_USERNAME" target="_blank" rel="noopener">♥ Donate</a><a class="context" href="context.html">✦ Context</a>
-
-<h1>✦ WALT RIZNEY ✦</h1>
+<img src="./assets/rizney.png" alt="Rizney" class="logo-img" />
+<h1>✦ Mix'N'Mojo ✦</h1>
 <div class="tagline">Mix'N'Mojo</div>
 
   </section>  <section class="player-dock">
@@ -312,16 +340,18 @@
     <button id="next-song" class="skip" type="button" aria-label="Next song">»</button>
   </nav>  <main>
     <p class="intro">Browse the collection in order, or let the cards choose a song for you.</p><section id="reading" hidden>
-  <h2>Your Music Reading</h2>
-  <div id="cards"></div>
+   <h2>Your Music Reading</h2>
+   <div id="cards"></div>
 </section>
 
 <section>
-  <h2>Chronological</h2>
-  <div id="song-list"></div>
+   <h2>Chronological</h2>
+   <div id="song-list"></div>
 </section>
 
-  </main>  <script src="https://www.youtube.com/iframe_api"></script>  <script>
+  </main>  <footer>
+    <img src="./assets/curse.png" alt="Curse" />
+  </footer>  <script src="https://www.youtube.com/iframe_api"></script>  <script>
     // EDIT YOUR SONGS HERE. Keep one YouTube URL on each line.
     const songs = [
       'https://youtube.com/shorts/mkKOtZPLkzY',

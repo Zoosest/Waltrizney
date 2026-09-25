@@ -59,7 +59,7 @@
       #cards .card .symbol { display: none; }
       #cards .card strong { margin: 0 0 4px; }
       .card-animal-icon { display: block; width: 112px; height: 112px; margin: 0 auto 6px; object-fit: contain; border-radius: 12px; background: #000; padding: 0; }
-      .card-animal-fallback { display: block; width: 112px; height: 112px; margin: 0 auto 6px; padding-top: 28px; box-sizing: border-box; text-align: center; font-size: 3rem; line-height: 1; background: #000; }
+      .card-animal-fallback { display: block; width: 112px; height: 112px; margin: 0 auto 6px; padding-top: 28px; box-sizing: border-box; text-align: center; font-size: 3rem; line-height: 1; background: #000; border-radius: 12px; }
       @media (max-width: 640px) {
         #song-list .song { grid-template-columns: 46px minmax(0, 1fr); gap: 8px; padding: 8px; }
         .song-animal-button { width: 46px; height: 46px; }

@@ -1,216 +1,701 @@
-<!DOCTYPE html>  <html lang="en">  
-<head>  
-  <meta charset="UTF-8" />  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
-  <title>Rizney Music Archive</title>  
-  <style>  
-    :root{--black:#000;--panel:#120b18;--purple:#c084fc;--bright-purple:#e0aaff;--gold:#d4af37;--bright-gold:#f5d76e;--muted:#b9a8c5}  
-    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--purple);background:var(--black);font-family:Georgia,"Times New Roman",serif}.top-area{position:relative;padding:10px 14px 18px;text-align:center}.donate{position:absolute;top:10px;left:10px;border:1px solid var(--gold);border-radius:999px;padding:5px 9px;color:var(--bright-gold);background:#160c1c;font-size:.68rem;text-decoration:none}h1{margin:4px 0 0;color:var(--bright-gold);font-size:1.55rem;letter-spacing:.08em}.tagline{margin-top:6px;color:var(--muted);font-size:.78rem}.player-dock{position:sticky;top:0;z-index:100;background:rgba(0,0,0,.98);border-top:1px solid var(--gold);border-bottom:1px solid var(--gold);box-shadow:0 7px 28px rgba(0,0,0,.9)}.player-wrap{width:100%;max-width:620px;margin:auto;aspect-ratio:16/9;background:#090509}#player{width:100%;height:100%;border:0;display:block}#now-playing{padding:7px 10px 8px;color:var(--bright-purple);background:#050305;font-size:.85rem;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.controls{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;padding:10px 8px 12px;background:#000;border-bottom:1px solid #3b1d50}button{border:1px solid var(--gold);border-radius:999px;padding:9px 12px;color:#fff;background:#55208a;font:inherit;font-size:.82rem;cursor:pointer}button:hover{background:#7e35bc}button:disabled{opacity:.45;cursor:not-allowed}.skip{min-width:42px;width:42px;height:38px;padding:0;font-size:1.2rem}main{width:min(100% - 24px,900px);margin:auto;padding:18px 0 50px}.intro{color:var(--muted);text-align:center;line-height:1.45}h2{color:var(--bright-gold);font-size:1.25rem;border-bottom:1px solid var(--gold);padding-bottom:8px}#cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:12px 0 22px}.card{min-height:150px;padding:9px 6px;color:var(--bright-purple);background:linear-gradient(145deg,#21102e,#090509);border:2px solid var(--gold);border-radius:12px;text-align:center}.card .symbol{display:block;color:var(--bright-gold);font-size:1.7rem;margin-bottom:6px}.card strong{display:block;margin-bottom:8px;font-size:.78rem}.card a{color:var(--bright-gold);font-size:.7rem}#song-list{display:grid;gap:8px}.song{display:grid;grid-template-columns:38px 1fr auto;align-items:center;gap:10px;padding:10px;color:var(--purple);background:var(--panel);border:1px solid #3b1d50;border-radius:8px}.song-number{color:var(--gold);text-align:center}.song-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.song small{display:block;color:var(--muted);font-family:sans-serif;font-size:.7rem;margin-top:3px}.play{padding:7px 10px;font-size:.78rem}@media(max-width:500px){.top-area{padding-top:42px}.donate{top:8px;left:8px}h1{font-size:1.35rem}.controls{gap:6px}button{font-size:.75rem;padding:8px 10px}.skip{width:38px;min-width:38px;height:34px}.card{min-height:130px}.card strong{font-size:.7rem}.song{grid-template-columns:30px 1fr auto}.song-title{font-size:.82rem}}  
-  </style>  
-</head>  
-<body>  
-  <section class="top-area"><a class="donate" href="https://venmo.com/u/YOUR_VENMO_USERNAME" target="_blank" rel="noopener">♥ Donate</a><h1>✦ WALT RIZNEY ✦</h1><div class="tagline">Mix'N'Mojo</div></section>  
-  <section class="player-dock"><div class="player-wrap"><div id="player"></div></div><div id="now-playing">Now playing: MEGA MIX'N'MOJO Intro</div></section>  
-  <nav class="controls" aria-label="Music controls"><button id="previous-song" class="skip" type="button" aria-label="Previous song">«</button><button id="random-song" type="button">Random</button><button id="whack-track" type="button">Whack-A-Track</button><button id="draw-cards" type="button">CARDS</button><button id="next-song" class="skip" type="button" aria-label="Next song">»</button></nav>  
-  <main><p class="intro">Browse the collection in order, or let the cards choose a song for you.</p><section id="reading" hidden><h2>Your Music Reading</h2><div id="cards"></div></section><section><h2>Chronological</h2><div id="song-list"></div></section></main>  
-  <script src="https://www.youtube.com/iframe_api"></script>  
-  <script>  
-    // EDIT YOUR SONGS HERE. Keep one YouTube URL on each line.  
-    const songs = [  
-      'https://youtube.com/shorts/mkKOtZPLkzY',  
-      'https://youtu.be/K2Dujl_bFZg',  
-      'https://youtu.be/9lMRH8Q47KU',  
-      'https://youtu.be/_X3lvzQ-LPU',  
-      'https://youtu.be/UPrAovWTbPg',  
-      'https://youtu.be/eEMpzOWMOss',  
-      'https://youtu.be/eaii8UpU3nY',  
-      'https://youtu.be/gVx8-14vNyc',  
-      'https://youtu.be/S2gfGK3DwJ0',  
-      'https://youtu.be/5wlDe0rmGgw',  
-      'https://youtu.be/Aa59hZscrYg',  
-      'https://youtu.be/na2pWme1cZ4',  
-      'https://youtu.be/hv86n3luqpo',  
-      'https://youtu.be/sCLUO6SzQtg',  
-      'https://youtu.be/lsYUN1hftyw',  
-      'https://youtu.be/U8wk5Ed90fk',  
-      'https://youtu.be/hh-U98bN3Vc',  
-      'https://youtu.be/npayCUDcWoE',  
-      'https://youtu.be/GIf2CUNburw',  
-      'https://youtu.be/nPzfOkoNiFk',  
-      'https://youtu.be/wG7SRL1Do00',  
-      'https://youtu.be/OD5x9DY2dzU',  
-      'https://youtu.be/1qAKYJo1zRc',  
-      'https://youtu.be/mBBU3nAUL94',  
-      'https://youtu.be/CAwy7WirHTA',  
-      'https://youtu.be/uVDGYtRELas',  
-      'https://youtu.be/zb0vUX07fn0',  
-      'https://youtu.be/vKmHvqGr2pI',  
-      'https://youtube.com/shorts/bcfu5SlUkv8',  
-      'https://youtube.com/shorts/-BeapYF5MTs',  
-      'https://youtube.com/shorts/r9wvi-TAZlc',  
-      'https://youtube.com/shorts/ojJ9ZS2K1To',  
-      'https://youtube.com/shorts/nSog7wdCuzM',  
-      'https://youtu.be/i-iAw8ldPKA',  
-      'https://youtu.be/zTw4hQfcq5s',  
-      'https://youtu.be/BhEPKP_8EmA',  
-      'https://youtu.be/u6kzuoyMGNI',  
-      'https://youtu.be/7S5CGfcv7jo',  
-      'https://youtu.be/10_lgpIvQgk',  
-      'https://youtu.be/gDwbTglsZJY',  
-      'https://youtu.be/TBXd7UZK3qI',  
-      'https://youtu.be/7rtoEbi6Pdk',  
-      'https://youtu.be/TSkWo5NC9v4',  
-      'https://youtu.be/b4i7RWKF5jQ',  
-      'https://youtu.be/kT6elgb33VY',  
-      'https://youtu.be/aQdOCtKqRyQ',  
-      'https://youtu.be/MdzDESjZEPc',  
-      'https://youtu.be/gLtz61TxWrM',  
-      'https://youtu.be/4tXQdNFetBo',  
-      'https://youtu.be/FUztI7OonBM',  
-      'https://youtu.be/NzoX2TKQw0I',  
-      'https://youtu.be/2zDnxyQ--Wg',  
-      'https://youtu.be/azce-gXKSF8',  
-      'https://youtu.be/VeAhTMWuF1s',  
-      'https://youtu.be/M02ODBjIy6w',  
-      'https://youtu.be/q6e_ddPAWKE',  
-      'https://youtu.be/pyPrRO6TGAs',  
-      'https://youtu.be/b9TbozTf6Qk',  
-      'https://youtu.be/5xXedAnruJI',  
-      'https://youtu.be/4mw62DQ9-FQ',  
-      'https://youtu.be/kyv4PVpj78U',  
-      'https://youtu.be/Uee0zrEt-N8',  
-      'https://youtu.be/2OWU6PP_KJM',  
-      'https://youtu.be/vypaky2Kitc',  
-      'https://youtu.be/eEKToxRuqm4',  
-      'https://youtu.be/Uq3ivXGqurs',  
-      'https://youtu.be/hlJM0LmCWBM',  
-      'https://youtu.be/oByKEoTc6eU',  
-      'https://youtu.be/sL5jUjL8udU',  
-      'https://youtu.be/fHofWnhhyyc',  
-      'https://youtu.be/tDGH5cE8uvk',  
-      'https://youtu.be/5pwPH0xaIZY',  
-      'https://youtu.be/uPrk4qEE7S8',  
-      'https://youtu.be/r6cjVRFugM0',  
-      'https://youtu.be/i72aGyLuzsk',  
-      'https://youtu.be/8jb12q-Rqyo',  
-      'https://youtu.be/IvNPXZUTnvE',  
-      'https://youtu.be/JkPLPWgclqs',  
-      'https://youtu.be/taOcjDcAt-s',  
-      'https://youtu.be/o4R05kcZV-Y',  
-      'https://youtu.be/Qy5totGVOYc',  
-      'https://youtu.be/qm2xTOhpbCk',  
-      'https://youtu.be/WHPUaT48TG0',  
-      'https://youtu.be/-IO5z1jwbLE',  
-      'https://youtu.be/ZoiFadiQG6E',  
-      'https://youtu.be/7duBbZ22yPs',  
-      'https://youtu.be/6mgQ_altXc8',  
-      'https://youtu.be/P_EvP3_SZAk',  
-      'https://youtu.be/DjjWeVkpnM8',  
-      'https://youtu.be/adc6FmQUClE',  
-      'https://youtu.be/oRn_OyaZao8',  
-      'https://youtu.be/oPZuoczX1Og',  
-      'https://youtu.be/OyoHueUZ1o8',  
-      'https://youtu.be/94JSM5MjxLc',  
-      'https://youtu.be/6Im5a5ILeXA',  
-      'https://youtu.be/ZQFO_QFuYQI',  
-      'https://youtu.be/4UE8diN0Cao',  
-      'https://youtu.be/9tPTW9ukQ2w',  
-      'https://youtu.be/GAamtqGx8y0',  
-      'https://youtu.be/G8dTYB_WaIE',  
-      'https://youtu.be/WbPH9ikKq7A',  
-      'https://youtu.be/fE2YtLUgAmk',  
-      'https://youtu.be/F27lxAZhmnM',  
-      'https://youtu.be/OmLcbddZLgg',  
-      'https://youtu.be/is4-8CBCUmA',  
-      'https://youtu.be/AOYAqOMya8I',  
-      'https://youtu.be/T2GxEGavo4Q',  
-      'https://youtu.be/0pGkNmIP4zc',  
-      'https://youtu.be/lFTldznPCnE',  
-      'https://youtu.be/jV-9jOffbJs',  
-      'https://youtu.be/rgXvzz87ONw',  
-      'https://youtu.be/TI0i6bCDFC4',  
-      'https://youtu.be/E4vBJG4CT0w',  
-      'https://youtu.be/jSTVWXnvQEY',  
-      'https://youtu.be/NcJigVJt9fI',  
-      'https://youtu.be/-OlOlJAfRrM',  
-      'https://youtu.be/66_1LFWwpXs',  
-      'https://youtu.be/QDieYFckAPg',  
-      'https://youtu.be/JUN__9svvX4',  
-      'https://youtu.be/58ddh3ND2bI',  
-      'https://youtu.be/abMQCyo76LI',  
-      'https://youtu.be/aeZGKnigKmA',  
-      'https://youtu.be/0TycDzowjdk',  
-      'https://youtu.be/k9EJdVrIOp4',  
-      'https://youtu.be/SHhsdD5viWs',  
-      'https://youtu.be/Gfy31tDV_no',  
-      'https://youtu.be/BVnXCpyatxM',  
-      'https://youtu.be/20ihDXK0CkE',  
-      'https://youtu.be/i_kZ7KSiHmc',  
-      'https://youtu.be/sL_DWtojWrw',  
-      'https://youtu.be/xGRVi4GIV-s',  
-      'https://youtu.be/5JDY6C1UyN8',  
-      'https://youtu.be/P8lHafrsmY4',  
-      'https://youtu.be/GF0LoexovMo',  
-      'https://youtu.be/mfbnpijaDdM',  
-      'https://youtu.be/oInpReDmZrc',  
-      'https://youtu.be/r814RQX3IE4',  
-      'https://youtu.be/sjJyzWufuS4',  
-      'https://youtu.be/aOsenVYYOkM',  
-      'https://youtu.be/qAW5LqxyyCU',  
-      'https://youtu.be/DBij5XTBEqM',  
-      'https://youtu.be/8pezb1KjWEo',  
-      'https://youtu.be/QfOamOb8M3I',  
-      'https://youtu.be/iCv-RGZDbP0',  
-      'https://youtu.be/OE1R8XS0gQY',  
-      'https://youtu.be/heSXocBU0Zg',  
-      'https://youtu.be/2UFOc97Rp40',  
-      'https://youtu.be/IFxtiGyF9o4',  
-      'https://youtu.be/TS5v0O3T6w8',  
-      'https://youtu.be/aI5wBezjMI4',  
-      'https://youtu.be/_7gUtHyroNE',  
-      'https://youtu.be/na8jHFCRWd4',  
-      'https://youtu.be/uKHmcamvruM',  
-      'https://youtu.be/_SmqwV7k3zY',  
-      'https://youtu.be/8evvIeYilao',  
-      'https://youtu.be/YZtoMiTtiwg',  
-      'https://youtu.be/ZZl-WJM1MgM',  
-      'https://youtu.be/33I_Fm6tK4E',  
-      'https://youtu.be/9cJ6I3hWz5E',  
-      'https://youtu.be/tr96Ee9Ulto',  
-      'https://youtu.be/nxgqXeuc-CU',  
-      'https://youtu.be/B_fhCvx_xPk',  
-      'https://youtu.be/vm6WpO-U9xA',  
-      'https://youtu.be/zPH4F0UUpGM',  
-      'https://youtu.be/6jRDo2q6Dtg',  
-      'https://youtu.be/EfLMAfxEc7A',  
-      'https://youtu.be/bdext1tW3YM',  
-      'https://youtu.be/LhEAe8tuS18',  
-      'https://youtu.be/BrccqDo-qxw',  
-      'https://youtu.be/GCPGxDdpugE',  
-      'https://youtu.be/5RVldUp7n_c',  
-      'https://youtu.be/x7Edg_aqeaU',  
-      'https://youtu.be/FigWQ4xaWoc',  
-      'https://youtu.be/8koRvyJpZuw',  
-      'https://youtu.be/50qPRfx1uc0',  
-      'https://youtu.be/Kg8nSXhgjdk',  
-      'https://youtu.be/jgSv8g5bxT8'  
-    ];  const ids=songs.map(url=>url.match(/(?:youtu\.be\/|shorts\/|watch\?v=)([^?&/]+)/)?.[1]).filter(Boolean);  
-const $=s=>document.querySelector(s),nowPlaying=$('#now-playing'),list=$('#song-list'),cards=$('#cards'),reading=$('#reading'),previousButton=$('#previous-song'),nextButton=$('#next-song');  
-let player=null,currentIndex=0,cardPlaylist=null,cardPosition=0;  
-const titleFor=i=>`Song ${i+1}`;  
-function updateButtons(){previousButton.disabled=cardPlaylist===null?currentIndex<=0:cardPosition<=0;nextButton.disabled=cardPlaylist===null?currentIndex>=ids.length-1:cardPosition>=cardPlaylist.length-1}  
-function play(index){if(!ids[index])return;currentIndex=index;nowPlaying.textContent=`Now playing: ${titleFor(index)}`;if(player)player.loadVideoById({videoId:ids[index]});updateButtons();window.scrollTo({top:0,behavior:'smooth'})}  
-function playPosition(position){if(!cardPlaylist||cardPlaylist[position]===undefined)return;cardPosition=position;currentIndex=cardPlaylist[position];nowPlaying.textContent=`Reading ${position+1} of ${cardPlaylist.length}: ${titleFor(currentIndex)}`;if(player)player.loadVideoById({videoId:ids[currentIndex]});updateButtons()}  
-function next(){if(cardPlaylist!==null){if(cardPosition<cardPlaylist.length-1)return playPosition(cardPosition+1);cardPlaylist=null;cardPosition=0;nowPlaying.textContent='Music reading complete ✦';updateButtons();return}if(currentIndex<ids.length-1)play(currentIndex+1);else nowPlaying.textContent='You reached the end of the collection ✦';updateButtons()}  
-function previous(){if(cardPlaylist!==null){if(cardPosition>0)playPosition(cardPosition-1);return}if(currentIndex>0)play(currentIndex-1)}  
-window.onYouTubeIframeAPIReady=()=>{player=new YT.Player('player',{videoId:ids[0],playerVars:{autoplay:0,rel:0,modestbranding:1,playsinline:1},events:{onReady:()=>{window.rizneyPlayer=player;updateButtons()},onStateChange:e=>{if(e.data===YT.PlayerState.ENDED)next()}}});window.rizneyPlayer=player};  
-ids.forEach((id,index)=>{const row=document.createElement('article');row.className='song';row.innerHTML=`<span class="song-number">${index+1}</span><span class="song-title">♫ ${titleFor(index)}<small>YouTube video • chronological position ${index+1}</small></span><button class="play" type="button">Play</button>`;row.querySelector('button').onclick=()=>{cardPlaylist=null;cardPosition=0;play(index)};list.appendChild(row)});  
-$('#random-song').onclick=()=>{cardPlaylist=null;cardPosition=0;play(Math.floor(Math.random()*ids.length))};previousButton.onclick=previous;nextButton.onclick=next;  
-$('#draw-cards').onclick=()=>{cardPlaylist=[...ids.keys()].sort(()=>Math.random()-.5).slice(0,Math.min(6,ids.length));cardPosition=0;reading.hidden=false;cards.innerHTML='';['✦','✧','✩','✹','✺','✷'].slice(0,cardPlaylist.length).forEach((symbol,position)=>{const card=document.createElement('article');card.className='card';card.innerHTML=`<span class="symbol">${symbol}</span><strong>Reading ${position+1}</strong><a href="#">Play song ${cardPlaylist[position]+1}</a>`;card.querySelector('a').onclick=e=>{e.preventDefault();playPosition(position)};cards.appendChild(card)});updateButtons()};  
-updateButtons();
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rizney Music Archive</title>  <style>
+    :root {
+      --black:#000;
+      --panel:#120b18;
+      --purple:#c084fc;
+      --bright-purple:#e0aaff;
+      --gold:#d4af37;
+      --bright-gold:#f5d76e;
+      --muted:#b9a8c5
+    }
 
-  </script>  
-    <script src="./whack-a-track.js"></script>
-<script src="./frogger.js"></script>
-</body>
+    * {
+      box-sizing:border-box
+    }
+
+    html {
+      scroll-behavior:smooth
+    }
+
+    body {
+      margin:0;
+      color:var(--purple);
+      background:var(--black);
+      font-family:Georgia,"Times New Roman",serif
+    }
+
+    .top-area {
+      position:relative;
+      padding:10px 14px 18px;
+      text-align:center
+    }
+
+    .donate {
+      position:absolute;
+      top:10px;
+      left:10px;
+      border:1px solid var(--gold);
+      border-radius:999px;
+      padding:5px 9px;
+      color:var(--bright-gold);
+      background:#160c1c;
+      font-size:.68rem;
+      text-decoration:none
+    }
+
+    .context {
+      position:absolute;
+      top:10px;
+      left:50%;
+      transform:translateX(-50%);
+      border:1px solid var(--gold);
+      border-radius:999px;
+      padding:5px 9px;
+      color:var(--bright-gold);
+      background:#160c1c;
+      font-size:.68rem;
+      text-decoration:none
+    }
+
+    h1 {
+      margin:4px 0 0;
+      color:var(--bright-gold);
+      font-size:1.55rem;
+      letter-spacing:.08em
+    }
+
+    .tagline {
+      margin-top:6px;
+      color:var(--muted);
+      font-size:.78rem
+    }
+
+    .player-dock {
+      position:sticky;
+      top:0;
+      z-index:100;
+      background:rgba(0,0,0,.98);
+      border-top:1px solid var(--gold);
+      border-bottom:1px solid var(--gold);
+      box-shadow:0 7px 28px rgba(0,0,0,.9)
+    }
+
+    .player-wrap {
+      width:100%;
+      max-width:620px;
+      margin:auto;
+      aspect-ratio:16/9;
+      background:#090509
+    }
+
+    #player {
+      width:100%;
+      height:100%;
+      border:0;
+      display:block
+    }
+
+    #now-playing {
+      padding:7px 10px 8px;
+      color:var(--bright-purple);
+      background:#050305;
+      font-size:.85rem;
+      text-align:center;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis
+    }
+
+    .controls {
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      justify-content:center;
+      align-items:center;
+      padding:10px 8px 12px;
+      background:#000;
+      border-bottom:1px solid #3b1d50
+    }
+
+    button {
+      border:1px solid var(--gold);
+      border-radius:999px;
+      padding:9px 12px;
+      color:#fff;
+      background:#55208a;
+      font:inherit;
+      font-size:.82rem;
+      cursor:pointer
+    }
+
+    button:hover {
+      background:#7e35bc
+    }
+
+    button:disabled {
+      opacity:.45;
+      cursor:not-allowed
+    }
+
+    .skip {
+      min-width:42px;
+      width:42px;
+      height:38px;
+      padding:0;
+      font-size:1.2rem
+    }
+
+    main {
+      width:min(100% - 24px,900px);
+      margin:auto;
+      padding:18px 0 50px
+    }
+
+    .intro {
+      color:var(--muted);
+      text-align:center;
+      line-height:1.45
+    }
+
+    h2 {
+      color:var(--bright-gold);
+      font-size:1.25rem;
+      border-bottom:1px solid var(--gold);
+      padding-bottom:8px
+    }
+
+    #cards {
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:9px;
+      margin:12px 0 22px
+    }
+
+    .card {
+      min-height:150px;
+      padding:9px 6px;
+      color:var(--bright-purple);
+      background:linear-gradient(145deg,#21102e,#090509);
+      border:2px solid var(--gold);
+      border-radius:12px;
+      text-align:center
+    }
+
+    .card .symbol {
+      display:block;
+      color:var(--bright-gold);
+      font-size:1.7rem;
+      margin-bottom:6px
+    }
+
+    .card strong {
+      display:block;
+      margin-bottom:8px;
+      font-size:.78rem
+    }
+
+    .card a {
+      color:var(--bright-gold);
+      font-size:.7rem
+    }
+
+    #song-list {
+      display:grid;
+      gap:8px
+    }
+
+    .song {
+      display:grid;
+      grid-template-columns:38px 1fr auto;
+      align-items:center;
+      gap:10px;
+      padding:10px;
+      color:var(--purple);
+      background:var(--panel);
+      border:1px solid #3b1d50;
+      border-radius:8px
+    }
+
+    .song-number {
+      color:var(--gold);
+      text-align:center
+    }
+
+    .song-title {
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap
+    }
+
+    .song small {
+      display:block;
+      color:var(--muted);
+      font-family:sans-serif;
+      font-size:.7rem;
+      margin-top:3px
+    }
+
+    .play {
+      padding:7px 10px;
+      font-size:.78rem
+    }
+
+    @media(max-width:500px) {
+      .top-area {
+        padding-top:42px
+      }
+
+      .donate {
+        top:8px;
+        left:8px
+      }
+
+      .context {
+        top:8px
+      }
+
+      h1 {
+        font-size:1.35rem
+      }
+
+      .controls {
+        gap:6px
+      }
+
+      button {
+        font-size:.75rem;
+        padding:8px 10px
+      }
+
+      .skip {
+        width:38px;
+        min-width:38px;
+        height:34px
+      }
+
+      .card {
+        min-height:130px
+      }
+
+      .card strong {
+        font-size:.7rem
+      }
+
+      .song {
+        grid-template-columns:30px 1fr auto
+      }
+
+      .song-title {
+        font-size:.82rem
+      }
+    }
+  </style></head><body>  <section class="top-area">
+    <a class="donate" href="https://venmo.com/u/YOUR_VENMO_USERNAME" target="_blank" rel="noopener">♥ Donate</a><a class="context" href="context.html">✦ Context</a>
+
+<h1>✦ WALT RIZNEY ✦</h1>
+<div class="tagline">Mix'N'Mojo</div>
+
+  </section>  <section class="player-dock">
+    <div class="player-wrap">
+      <div id="player"></div>
+    </div><div id="now-playing">Now playing: MEGA MIX'N'MOJO Intro</div>
+
+  </section>  <nav class="controls" aria-label="Music controls">
+    <button id="previous-song" class="skip" type="button" aria-label="Previous song">«</button>
+    <button id="random-song" type="button">Random</button>
+    <button id="whack-track" type="button">Whack-A-Track</button>
+    <button id="draw-cards" type="button">CARDS</button>
+    <button id="next-song" class="skip" type="button" aria-label="Next song">»</button>
+  </nav>  <main>
+    <p class="intro">Browse the collection in order, or let the cards choose a song for you.</p><section id="reading" hidden>
+  <h2>Your Music Reading</h2>
+  <div id="cards"></div>
+</section>
+
+<section>
+  <h2>Chronological</h2>
+  <div id="song-list"></div>
+</section>
+
+  </main>  <script src="https://www.youtube.com/iframe_api"></script>  <script>
+    // EDIT YOUR SONGS HERE. Keep one YouTube URL on each line.
+    const songs = [
+      'https://youtube.com/shorts/mkKOtZPLkzY',
+      'https://youtu.be/K2Dujl_bFZg',
+      'https://youtu.be/9lMRH8Q47KU',
+      'https://youtu.be/_X3lvzQ-LPU',
+      'https://youtu.be/UPrAovWTbPg',
+      'https://youtu.be/eEMpzOWMOss',
+      'https://youtu.be/eaii8UpU3nY',
+      'https://youtu.be/gVx8-14vNyc',
+      'https://youtu.be/S2gfGK3DwJ0',
+      'https://youtu.be/5wlDe0rmGgw',
+      'https://youtu.be/Aa59hZscrYg',
+      'https://youtu.be/na2pWme1cZ4',
+      'https://youtu.be/hv86n3luqpo',
+      'https://youtu.be/sCLUO6SzQtg',
+      'https://youtu.be/lsYUN1hftyw',
+      'https://youtu.be/U8wk5Ed90fk',
+      'https://youtu.be/hh-U98bN3Vc',
+      'https://youtu.be/npayCUDcWoE',
+      'https://youtu.be/GIf2CUNburw',
+      'https://youtu.be/nPzfOkoNiFk',
+      'https://youtu.be/wG7SRL1Do00',
+      'https://youtu.be/OD5x9DY2dzU',
+      'https://youtu.be/1qAKYJo1zRc',
+      'https://youtu.be/mBBU3nAUL94',
+      'https://youtu.be/CAwy7WirHTA',
+      'https://youtu.be/uVDGYtRELas',
+      'https://youtu.be/zb0vUX07fn0',
+      'https://youtu.be/vKmHvqGr2pI',
+      'https://youtube.com/shorts/bcfu5SlUkv8',
+      'https://youtube.com/shorts/-BeapYF5MTs',
+      'https://youtube.com/shorts/r9wvi-TAZlc',
+      'https://youtube.com/shorts/ojJ9ZS2K1To',
+      'https://youtube.com/shorts/nSog7wdCuzM',
+      'https://youtu.be/i-iAw8ldPKA',
+      'https://youtu.be/zTw4hQfcq5s',
+      'https://youtu.be/BhEPKP_8EmA',
+      'https://youtu.be/u6kzuoyMGNI',
+      'https://youtu.be/7S5CGfcv7jo',
+      'https://youtu.be/10_lgpIvQgk',
+      'https://youtu.be/gDwbTglsZJY',
+      'https://youtu.be/TBXd7UZK3qI',
+      'https://youtu.be/7rtoEbi6Pdk',
+      'https://youtu.be/TSkWo5NC9v4',
+      'https://youtu.be/b4i7RWKF5jQ',
+      'https://youtu.be/kT6elgb33VY',
+      'https://youtu.be/aQdOCtKqRyQ',
+      'https://youtu.be/MdzDESjZEPc',
+      'https://youtu.be/gLtz61TxWrM',
+      'https://youtu.be/4tXQdNFetBo',
+      'https://youtu.be/FUztI7OonBM',
+      'https://youtu.be/NzoX2TKQw0I',
+      'https://youtu.be/2zDnxyQ--Wg',
+      'https://youtu.be/azce-gXKSF8',
+      'https://youtu.be/VeAhTMWuF1s',
+      'https://youtu.be/M02ODBjIy6w',
+      'https://youtu.be/q6e_ddPAWKE',
+      'https://youtu.be/pyPrRO6TGAs',
+      'https://youtu.be/b9TbozTf6Qk',
+      'https://youtu.be/5xXedAnruJI',
+      'https://youtu.be/4mw62DQ9-FQ',
+      'https://youtu.be/kyv4PVpj78U',
+      'https://youtu.be/Uee0zrEt-N8',
+      'https://youtu.be/2OWU6PP_KJM',
+      'https://youtu.be/vypaky2Kitc',
+      'https://youtu.be/eEKToxRuqm4',
+      'https://youtu.be/Uq3ivXGqurs',
+      'https://youtu.be/hlJM0LmCWBM',
+      'https://youtu.be/oByKEoTc6eU',
+      'https://youtu.be/sL5jUjL8udU',
+      'https://youtu.be/fHofWnhhyyc',
+      'https://youtu.be/tDGH5cE8uvk',
+      'https://youtu.be/5pwPH0xaIZY',
+      'https://youtu.be/uPrk4qEE7S8',
+      'https://youtu.be/r6cjVRFugM0',
+      'https://youtu.be/i72aGyLuzsk',
+      'https://youtu.be/8jb12q-Rqyo',
+      'https://youtu.be/IvNPXZUTnvE',
+      'https://youtu.be/JkPLPWgclqs',
+      'https://youtu.be/taOcjDcAt-s',
+      'https://youtu.be/o4R05kcZV-Y',
+      'https://youtu.be/Qy5totGVOYc',
+      'https://youtu.be/qm2xTOhpbCk',
+      'https://youtu.be/WHPUaT48TG0',
+      'https://youtu.be/-IO5z1jwbLE',
+      'https://youtu.be/ZoiFadiQG6E',
+      'https://youtu.be/7duBbZ22yPs',
+      'https://youtu.be/6mgQ_altXc8',
+      'https://youtu.be/P_EvP3_SZAk',
+      'https://youtu.be/DjjWeVkpnM8',
+      'https://youtu.be/adc6FmQUClE',
+      'https://youtu.be/oRn_OyaZao8',
+      'https://youtu.be/oPZuoczX1Og',
+      'https://youtu.be/OyoHueUZ1o8',
+      'https://youtu.be/94JSM5MjxLc',
+      'https://youtu.be/6Im5a5ILeXA',
+      'https://youtu.be/ZQFO_QFuYQI',
+      'https://youtu.be/4UE8diN0Cao',
+      'https://youtu.be/9tPTW9ukQ2w',
+      'https://youtu.be/GAamtqGx8y0',
+      'https://youtu.be/G8dTYB_WaIE',
+      'https://youtu.be/WbPH9ikKq7A',
+      'https://youtu.be/fE2YtLUgAmk',
+      'https://youtu.be/F27lxAZhmnM',
+      'https://youtu.be/OmLcbddZLgg',
+      'https://youtu.be/is4-8CBCUmA',
+      'https://youtu.be/AOYAqOMya8I',
+      'https://youtu.be/T2GxEGavo4Q',
+      'https://youtu.be/0pGkNmIP4zc',
+      'https://youtu.be/lFTldznPCnE',
+      'https://youtu.be/jV-9jOffbJs',
+      'https://youtu.be/rgXvzz87ONw',
+      'https://youtu.be/TI0i6bCDFC4',
+      'https://youtu.be/E4vBJG4CT0w',
+      'https://youtu.be/jSTVWXnvQEY',
+      'https://youtu.be/NcJigVJt9fI',
+      'https://youtu.be/-OlOlJAfRrM',
+      'https://youtu.be/66_1LFWwpXs',
+      'https://youtu.be/QDieYFckAPg',
+      'https://youtu.be/JUN__9svvX4',
+      'https://youtu.be/58ddh3ND2bI',
+      'https://youtu.be/abMQCyo76LI',
+      'https://youtu.be/aeZGKnigKmA',
+      'https://youtu.be/0TycDzowjdk',
+      'https://youtu.be/k9EJdVrIOp4',
+      'https://youtu.be/SHhsdD5viWs',
+      'https://youtu.be/Gfy31tDV_no',
+      'https://youtu.be/BVnXCpyatxM',
+      'https://youtu.be/20ihDXK0CkE',
+      'https://youtu.be/i_kZ7KSiHmc',
+      'https://youtu.be/sL_DWtojWrw',
+      'https://youtu.be/xGRVi4GIV-s',
+      'https://youtu.be/5JDY6C1UyN8',
+      'https://youtu.be/P8lHafrsmY4',
+      'https://youtu.be/GF0LoexovMo',
+      'https://youtu.be/mfbnpijaDdM',
+      'https://youtu.be/oInpReDmZrc',
+      'https://youtu.be/r814RQX3IE4',
+      'https://youtu.be/sjJyzWufuS4',
+      'https://youtu.be/aOsenVYYOkM',
+      'https://youtu.be/qAW5LqxyyCU',
+      'https://youtu.be/DBij5XTBEqM',
+      'https://youtu.be/8pezb1KjWEo',
+      'https://youtu.be/QfOamOb8M3I',
+      'https://youtu.be/iCv-RGZDbP0',
+      'https://youtu.be/OE1R8XS0gQY',
+      'https://youtu.be/heSXocBU0Zg',
+      'https://youtu.be/2UFOc97Rp40',
+      'https://youtu.be/IFxtiGyF9o4',
+      'https://youtu.be/TS5v0O3T6w8',
+      'https://youtu.be/aI5wBezjMI4',
+      'https://youtu.be/_7gUtHyroNE',
+      'https://youtu.be/na8jHFCRWd4',
+      'https://youtu.be/uKHmcamvruM',
+      'https://youtu.be/_SmqwV7k3zY',
+      'https://youtu.be/8evvIeYilao',
+      'https://youtu.be/YZtoMiTtiwg',
+      'https://youtu.be/ZZl-WJM1MgM',
+      'https://youtu.be/33I_Fm6tK4E',
+      'https://youtu.be/9cJ6I3hWz5E',
+      'https://youtu.be/tr96Ee9Ulto',
+      'https://youtu.be/nxgqXeuc-CU',
+      'https://youtu.be/B_fhCvx_xPk',
+      'https://youtu.be/vm6WpO-U9xA',
+      'https://youtu.be/zPH4F0UUpGM',
+      'https://youtu.be/6jRDo2q6Dtg',
+      'https://youtu.be/EfLMAfxEc7A',
+      'https://youtu.be/bdext1tW3YM',
+      'https://youtu.be/LhEAe8tuS18',
+      'https://youtu.be/BrccqDo-qxw',
+      'https://youtu.be/GCPGxDdpugE',
+      'https://youtu.be/5RVldUp7n_c',
+      'https://youtu.be/x7Edg_aqeaU',
+      'https://youtu.be/FigWQ4xaWoc',
+      'https://youtu.be/8koRvyJpZuw',
+      'https://youtu.be/50qPRfx1uc0',
+      'https://youtu.be/Kg8nSXhgjdk',
+      'https://youtu.be/jgSv8g5bxT8'
+    ];
+
+    const ids = songs
+      .map(url => url.match(/(?:youtu\.be\/|shorts\/|watch\?v=)([^?&/]+)/)?.[1])
+      .filter(Boolean);
+
+    const $ = s => document.querySelector(s);
+    const nowPlaying = $('#now-playing');
+    const list = $('#song-list');
+    const cards = $('#cards');
+    const reading = $('#reading');
+    const previousButton = $('#previous-song');
+    const nextButton = $('#next-song');
+
+    let player = null;
+    let currentIndex = 0;
+    let cardPlaylist = null;
+    let cardPosition = 0;
+
+    const titleFor = i => `Song ${i + 1}`;
+
+    function updateButtons() {
+      previousButton.disabled =
+        cardPlaylist === null
+          ? currentIndex <= 0
+          : cardPosition <= 0;
+
+      nextButton.disabled =
+        cardPlaylist === null
+          ? currentIndex >= ids.length - 1
+          : cardPosition >= cardPlaylist.length - 1;
+    }
+
+    function play(index) {
+      if (!ids[index]) return;
+
+      currentIndex = index;
+      nowPlaying.textContent = `Now playing: ${titleFor(index)}`;
+
+      if (player) {
+        player.loadVideoById({ videoId: ids[index] });
+      }
+
+      updateButtons();
+
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+
+    function playPosition(position) {
+      if (!cardPlaylist || cardPlaylist[position] === undefined) return;
+
+      cardPosition = position;
+      currentIndex = cardPlaylist[position];
+
+      nowPlaying.textContent =
+        `Reading ${position + 1} of ${cardPlaylist.length}: ${titleFor(currentIndex)}`;
+
+      if (player) {
+        player.loadVideoById({
+          videoId: ids[currentIndex]
+        });
+      }
+
+      updateButtons();
+    }
+
+    function next() {
+      if (cardPlaylist !== null) {
+        if (cardPosition < cardPlaylist.length - 1) {
+          return playPosition(cardPosition + 1);
+        }
+
+        cardPlaylist = null;
+        cardPosition = 0;
+        nowPlaying.textContent = 'Music reading complete ✦';
+        updateButtons();
+        return;
+      }
+
+      if (currentIndex < ids.length - 1) {
+        play(currentIndex + 1);
+      } else {
+        nowPlaying.textContent =
+          'You reached the end of the collection ✦';
+      }
+
+      updateButtons();
+    }
+
+    function previous() {
+      if (cardPlaylist !== null) {
+        if (cardPosition > 0) {
+          playPosition(cardPosition - 1);
+        }
+        return;
+      }
+
+      if (currentIndex > 0) {
+        play(currentIndex - 1);
+      }
+    }
+
+    window.onYouTubeIframeAPIReady = () => {
+      player = new YT.Player('player', {
+        videoId: ids[0],
+        playerVars: {
+          autoplay: 0,
+          rel: 0,
+          modestbranding: 1,
+          playsinline: 1
+        },
+        events: {
+          onReady: () => {
+            window.rizneyPlayer = player;
+            updateButtons();
+          },
+          onStateChange: e => {
+            if (e.data === YT.PlayerState.ENDED) {
+              next();
+            }
+          }
+        }
+      });
+
+      window.rizneyPlayer = player;
+    };
+
+    ids.forEach((id, index) => {
+      const row = document.createElement('article');
+
+      row.className = 'song';
+
+      row.innerHTML = `
+        <span class="song-number">${index + 1}</span>
+        <span class="song-title">
+          ♫ ${titleFor(index)}
+          <small>YouTube video • chronological position ${index + 1}</small>
+        </span>
+        <button class="play" type="button">Play</button>
+      `;
+
+      row.querySelector('button').onclick = () => {
+        cardPlaylist = null;
+        cardPosition = 0;
+        play(index);
+      };
+
+      list.appendChild(row);
+    });
+
+    $('#random-song').onclick = () => {
+      cardPlaylist = null;
+      cardPosition = 0;
+      play(Math.floor(Math.random() * ids.length));
+    };
+
+    previousButton.onclick = previous;
+    nextButton.onclick = next;
+
+    $('#draw-cards').onclick = () => {
+      cardPlaylist = [...ids.keys()]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, Math.min(6, ids.length));
+
+      cardPosition = 0;
+      reading.hidden = false;
+      cards.innerHTML = '';
+
+      ['✦','✧','✩','✹','✺','✷']
+        .slice(0, cardPlaylist.length)
+        .forEach((symbol, position) => {
+          const card = document.createElement('article');
+
+          card.className = 'card';
+
+          card.innerHTML = `
+            <span class="symbol">${symbol}</span>
+            <strong>Reading ${position + 1}</strong>
+            <a href="#">Play song ${cardPlaylist[position] + 1}</a>
+          `;
+
+          card.querySelector('a').onclick = e => {
+            e.preventDefault();
+            playPosition(position);
+          };
+
+          cards.appendChild(card);
+        });
+
+      updateButtons();
+    };
+
+    updateButtons();
+  </script>  <script src="./main.js"></script>  <script src="./whack-a-track.js"></script></body>
 </html>

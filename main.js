@@ -9,6 +9,11 @@
 
   const FALLBACK_ICON = "🐾";
 
+
+  /* =========================================
+     STYLES
+     ========================================= */
+
   function addStyles() {
     if (document.getElementById("animal-icon-styles")) return;
 
@@ -16,6 +21,7 @@
     style.id = "animal-icon-styles";
 
     style.textContent = `
+
       /* =========================================
          SONG ROWS
          ========================================= */
@@ -35,14 +41,18 @@
         padding-top: 2px;
         padding-bottom: 2px;
 
-        /* Small breathing room around the text */
+        /* Clean breathing room inside purple box */
         padding-left: 10px;
         padding-right: 10px;
 
         box-sizing: border-box;
       }
 
-      /* Song numbers stay behind expanding/dropdown panels */
+
+      /* =========================================
+         SONG NUMBERS
+         ========================================= */
+
       #song-list .song-number {
         position: absolute;
 
@@ -83,9 +93,12 @@
 
         cursor: pointer;
 
-        /* IMPORTANT:
-           Do not let numbers sit above Whack-A-Track */
-        z-index: 1;
+        /*
+          IMPORTANT:
+          Keep numbers behind expandable
+          game/dropdown elements.
+        */
+        z-index: 0 !important;
 
         box-sizing: border-box;
       }
@@ -93,19 +106,30 @@
       #song-list .song-number:hover,
       #song-list .song-number:focus {
         color: var(--bright-gold, #f5d76e);
+        z-index: 0 !important;
       }
+
+
+      /* =========================================
+         HIDDEN PLAY BUTTON
+         ========================================= */
 
       #song-list .song .play {
         display: none;
       }
 
-      /* Text inside the purple song box */
+
+      /* =========================================
+         SONG TEXT
+         ========================================= */
+
       #song-list .song-title {
         min-width: 0;
         overflow: hidden;
 
         display: flex;
         flex-direction: column;
+
         justify-content: center;
         align-self: stretch;
 
@@ -132,7 +156,7 @@
 
 
       /* =========================================
-         ANIMAL BUTTONS ON SONG ROWS
+         SONG ROW ANIMAL BUTTON
          ========================================= */
 
       #song-list .animal-button {
@@ -182,20 +206,13 @@
 
       #cards .card {
         min-width: 0;
-
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-        background: #000;
         box-sizing: border-box;
       }
 
-      /* The old card symbol is hidden because
-         the animal artwork replaces it */
-      #cards .card .symbol {
-        display: none;
-      }
+      /*
+        Animal copied from the corresponding
+        song row.
+      */
 
       #cards .card-animal-icon {
         width: 112px;
@@ -205,22 +222,6 @@
 
         object-fit: contain;
         object-position: center;
-
-        margin: 0 auto;
-
-        box-sizing: border-box;
-      }
-
-      #cards .card-animal-fallback {
-        width: 112px;
-        height: 112px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        font-size: 3rem;
-        line-height: 1;
 
         margin: 0 auto;
 
@@ -250,6 +251,7 @@
           box-sizing: border-box;
         }
 
+
         #song-list .song-number {
           left: calc(
             -1 * (
@@ -269,9 +271,9 @@
 
           font-size: .9rem;
 
-          /* Keep numbers behind dropdowns */
-          z-index: 1;
+          z-index: 0 !important;
         }
+
 
         #song-list .song-title {
           min-width: 0;
@@ -279,6 +281,7 @@
 
           display: flex;
           flex-direction: column;
+
           justify-content: center;
           align-self: stretch;
 
@@ -288,6 +291,7 @@
 
           line-height: 1.2;
         }
+
 
         #song-list .song-title small {
           display: block;
@@ -303,10 +307,12 @@
           line-height: 1.2;
         }
 
+
         #song-list .animal-button {
           width: 54px;
           height: 54px;
         }
+
 
         #song-list .animal-button img {
           width: 50px;
@@ -315,20 +321,16 @@
 
 
         /* Mobile cards */
+
         #cards {
           grid-template-columns: repeat(2, minmax(0, 1fr));
           gap: 10px;
         }
 
+
         #cards .card-animal-icon {
           width: 82px;
           height: 82px;
-        }
-
-        #cards .card-animal-fallback {
-          width: 82px;
-          height: 82px;
-          font-size: 2.4rem;
         }
       }
     `;
@@ -368,7 +370,7 @@
 
 
   /* =========================================
-     MAKE SONG-ROW ANIMAL BUTTON
+     MAKE ANIMAL BUTTON
      ========================================= */
 
   function makeImage(filename) {
@@ -376,8 +378,12 @@
 
     button.type = "button";
     button.className = "animal-button";
+
     button.title = iconLabel(filename);
-    button.setAttribute("aria-label", iconLabel(filename));
+    button.setAttribute(
+      "aria-label",
+      iconLabel(filename)
+    );
 
     const img = document.createElement("img");
 
@@ -385,7 +391,8 @@
     img.alt = iconLabel(filename);
     img.loading = "lazy";
 
-    img.src = RAW_PREFIX + encodeURIComponent(filename);
+    img.src =
+      RAW_PREFIX + encodeURIComponent(filename);
 
     img.onerror = () => {
       img.replaceWith(fallback());
@@ -415,7 +422,8 @@
   function playSongFromRow(row) {
     if (!row) return;
 
-    const playButton = row.querySelector(".play");
+    const playButton =
+      row.querySelector(".play");
 
     if (playButton) {
       playButton.click();
@@ -424,20 +432,25 @@
 
 
   /* =========================================
-     NUMBER BUTTON
+     SONG NUMBER
      ========================================= */
 
   function makeSongNumber(row, index) {
-    const oldNumber = row.querySelector(".song-number");
+    const oldNumber =
+      row.querySelector(".song-number");
 
     if (!oldNumber) return;
 
-    /* Don't rebuild it if already converted */
-    if (oldNumber.tagName === "A") return;
+    if (oldNumber.tagName === "A") {
+      return;
+    }
 
-    const numberLink = document.createElement("a");
+    const numberLink =
+      document.createElement("a");
 
-    numberLink.className = "song-number";
+    numberLink.className =
+      "song-number";
+
     numberLink.href = "#";
 
     numberLink.textContent =
@@ -448,11 +461,13 @@
       `Play song ${index + 1}`
     );
 
-    numberLink.addEventListener("click", event => {
-      event.preventDefault();
-
-      playSongFromRow(row);
-    });
+    numberLink.addEventListener(
+      "click",
+      event => {
+        event.preventDefault();
+        playSongFromRow(row);
+      }
+    );
 
     oldNumber.replaceWith(numberLink);
   }
@@ -463,7 +478,8 @@
      ========================================= */
 
   function makePlayButton(row) {
-    const button = row.querySelector(".play");
+    const button =
+      row.querySelector(".play");
 
     if (!button) return;
 
@@ -475,7 +491,7 @@
 
 
   /* =========================================
-     PUT ANIMAL ICONS ON SONG ROWS
+     SONG ROW ANIMAL ICONS
      ========================================= */
 
   function putIcons(files) {
@@ -483,7 +499,9 @@
 
     rows.forEach((row, index) => {
 
-      if (row.querySelector(".animal-button")) {
+      if (
+        row.querySelector(".animal-button")
+      ) {
         return;
       }
 
@@ -492,16 +510,20 @@
 
       if (!filename) return;
 
-      const icon = makeImage(filename);
+      const icon =
+        makeImage(filename);
 
       row.appendChild(icon);
 
-      icon.addEventListener("click", event => {
-        event.preventDefault();
-        event.stopPropagation();
+      icon.addEventListener(
+        "click",
+        event => {
+          event.preventDefault();
+          event.stopPropagation();
 
-        playSongFromRow(row);
-      });
+          playSongFromRow(row);
+        }
+      );
 
       makeSongNumber(row, index);
       makePlayButton(row);
@@ -510,68 +532,81 @@
 
 
   /* =========================================
-     PUT ANIMAL ICONS ON MUSIC READING CARDS
+     MUSIC READING CARD ANIMAL ICONS
      ========================================= */
 
-  function addCardIcons(files) {
+  function addCardIcons() {
+
+    const rows = songRows();
 
     /*
-      IMPORTANT:
-      The actual card container is #cards
-      and the individual cards are .card.
+      Find the actual cards.
+
+      We support the card containers used by
+      the page without changing their structure.
     */
 
     const cards = Array.from(
-      document.querySelectorAll("#cards .card")
+      document.querySelectorAll(
+        "#cards .card, #card-results .music-card, #card-results .card"
+      )
     );
 
     cards.forEach((card, index) => {
 
-      /* Don't duplicate icons */
-      if (card.querySelector(".card-animal-icon")) {
+      /*
+        Don't add another icon if this card
+        already has one.
+      */
+
+      if (
+        card.querySelector(
+          ".card-animal-icon"
+        )
+      ) {
         return;
       }
 
-      const filename =
-        files[index % files.length];
+      const row = rows[index];
 
-      if (!filename) return;
+      if (!row) return;
 
-      const img = document.createElement("img");
+      /*
+        Use the EXACT animal image already
+        working on the corresponding song row.
+      */
 
-      img.className = "card-animal-icon";
+      const rowImage =
+        row.querySelector(
+          ".animal-button img"
+        );
 
-      img.alt = iconLabel(filename);
+      if (!rowImage) return;
 
-      img.title = iconLabel(filename);
+      const img =
+        document.createElement("img");
+
+      img.className =
+        "card-animal-icon";
+
+      img.src =
+        rowImage.src;
+
+      img.alt =
+        rowImage.alt ||
+        "Animal";
+
+      img.title =
+        rowImage.alt ||
+        "Animal";
 
       img.loading = "lazy";
 
-      img.src =
-        RAW_PREFIX + encodeURIComponent(filename);
-
-      img.onerror = () => {
-
-        const replacement =
-          document.createElement("div");
-
-        replacement.className =
-          "card-animal-fallback";
-
-        replacement.textContent =
-          FALLBACK_ICON;
-
-        card.replaceChild(
-          replacement,
-          img
-        );
-      };
-
       /*
-        Put the animal artwork at the beginning
-        of the card so it appears where the
-        animal artwork belongs.
+        Put the animal at the beginning
+        of the card.
       */
+
       card.insertBefore(
         img,
         card.firstChild
@@ -581,7 +616,7 @@
 
 
   /* =========================================
-     LOAD ANIMAL FILES FROM GITHUB
+     LOAD ANIMAL FILES
      ========================================= */
 
   async function getAnimalFiles() {
@@ -612,7 +647,9 @@
             item &&
             item.type === "file"
         )
-        .map(item => item.name)
+        .map(
+          item => item.name
+        )
         .filter(
           name =>
             /\.(png|jpg|jpeg|webp)$/i.test(name)
@@ -656,7 +693,16 @@
 
     putIcons(files);
 
-    addCardIcons(files);
+    /*
+      Wait one tiny moment so the song-row
+      animal images definitely exist before
+      copying them to the cards.
+    */
+
+    setTimeout(
+      addCardIcons,
+      100
+    );
   }
 
 

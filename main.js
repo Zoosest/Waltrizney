@@ -592,12 +592,8 @@
       window.scrollY +
       cardsRect.top;
 
-    const cardsDocumentBottom =
-      window.scrollY +
-      cardsRect.bottom;
-
-    const cardsCenter =
-      (cardsDocumentTop + cardsDocumentBottom) / 2;
+    const cardsHeight =
+      cardsRect.height;
 
     const viewportHeight =
       window.innerHeight;
@@ -610,12 +606,13 @@
         ? dock.getBoundingClientRect().height
         : 0;
 
-    const usableViewportHeight =
+    const usableHeight =
       viewportHeight - dockHeight;
 
     const targetY =
-      cardsCenter -
-      (usableViewportHeight / 2);
+      cardsDocumentTop -
+      dockHeight -
+      (usableHeight - cardsHeight) / 2;
 
     window.scrollTo({
       top: Math.max(0, targetY),

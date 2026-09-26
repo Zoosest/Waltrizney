@@ -104,7 +104,6 @@
       #song-list .song-number:hover,
       #song-list .song-number:focus {
         color: var(--bright-gold, #f5d76e);
-        z-index: 0 !important;
       }
 
 
@@ -154,7 +153,7 @@
 
 
       /* =========================================
-         SONG ROW ANIMAL
+         SONG ROW ANIMAL BUTTON
          ========================================= */
 
       #song-list .animal-button {
@@ -207,46 +206,91 @@
         margin: 12px 0 22px;
       }
 
+
+      /* The entire card is now the button */
+
       #cards .card {
         min-width: 0;
         min-height: 0;
 
         box-sizing: border-box;
 
-        padding: 7px 5px;
+        padding: 9px 6px;
 
         display: flex;
         flex-direction: column;
 
-        justify-content: space-between;
+        justify-content: center;
         align-items: center;
 
         overflow: hidden;
+
+        color: var(--bright-purple, #e0aaff);
+
+        background:
+          linear-gradient(
+            145deg,
+            #21102e,
+            #090509
+          );
+
+        border: 2px solid var(--gold, #d4af37);
+        border-radius: 12px;
+
+        text-align: center;
+
+        cursor: pointer;
+
+        font: inherit;
+
+        transition:
+          transform .12s ease,
+          background .12s ease,
+          border-color .12s ease;
       }
 
 
-      /* Hide the decorative tarot symbol.
-         The animal becomes the visual symbol. */
+      #cards .card:hover {
+        background:
+          linear-gradient(
+            145deg,
+            #2b1540,
+            #100817
+          );
+
+        border-color:
+          var(--bright-gold, #f5d76e);
+
+        transform: translateY(-2px);
+      }
+
+
+      #cards .card:active {
+        transform: translateY(0);
+      }
+
+
+      #cards .card:focus-visible {
+        outline:
+          2px solid
+          var(--bright-gold, #f5d76e);
+
+        outline-offset: 3px;
+      }
+
+
+      /* Remove everything except our animal */
 
       #cards .card .symbol {
         display: none;
       }
 
-
-      /* =========================================
-         CARD READING TITLE
-         ========================================= */
-
       #cards .card strong {
-        display: block;
+        display: none;
+      }
 
-        margin: 0 0 4px;
-
-        font-size: .72rem;
-
-        line-height: 1.15;
-
-        text-align: center;
+      #cards .card a {
+        display: none;
       }
 
 
@@ -257,10 +301,10 @@
       #cards .card-animal-icon {
         display: block;
 
-        width: 96px;
-        height: 96px;
+        width: 104px;
+        height: 104px;
 
-        margin: 0 auto 4px;
+        margin: 0 auto 5px;
 
         object-fit: contain;
         object-position: center;
@@ -281,39 +325,31 @@
       #cards .card-animal-name {
         display: block;
 
-        margin: 0 0 3px;
+        width: 100%;
+        max-width: 100%;
 
-        color: var(--bright-purple, #e0aaff);
+        margin: 0;
 
-        font-size: .66rem;
+        color:
+          var(--bright-gold, #f5d76e);
+
+        font-family:
+          Georgia,
+          "Times New Roman",
+          serif;
+
+        font-size: .78rem;
+        font-weight: 700;
+
         line-height: 1.1;
 
         text-align: center;
 
         white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-
-        max-width: 100%;
-      }
-
-
-      /* =========================================
-         CARD SONG LINK
-         ========================================= */
-
-      #cards .card a {
-        display: block;
-
-        max-width: 100%;
 
         overflow: hidden;
+
         text-overflow: ellipsis;
-        white-space: nowrap;
-
-        font-size: .66rem;
-
-        line-height: 1.1;
       }
 
 
@@ -370,7 +406,7 @@
         }
 
 
-        /* Mobile cards */
+        /* Two columns on phones */
 
         #cards {
           grid-template-columns:
@@ -384,37 +420,29 @@
 
 
         #cards .card {
-          padding: 5px 4px;
+          padding: 6px 4px;
+
+          border-radius: 10px;
         }
 
 
         #cards .card-animal-icon {
-          width: 70px;
-          height: 70px;
+          width: 76px;
+          height: 76px;
 
-          margin-bottom: 3px;
+          margin-bottom: 4px;
         }
 
 
         #cards .card-animal-name {
-          font-size: .58rem;
-          margin-bottom: 2px;
-        }
-
-
-        #cards .card strong {
           font-size: .65rem;
-          margin-bottom: 2px;
-        }
-
-
-        #cards .card a {
-          font-size: .58rem;
         }
       }
 
 
-      /* Very small phones */
+      /* =========================================
+         VERY SMALL PHONES
+         ========================================= */
 
       @media (max-width: 380px) {
 
@@ -422,25 +450,20 @@
           gap: 5px;
         }
 
+
         #cards .card {
-          padding: 4px 3px;
+          padding: 5px 3px;
         }
+
 
         #cards .card-animal-icon {
-          width: 62px;
-          height: 62px;
+          width: 66px;
+          height: 66px;
         }
+
 
         #cards .card-animal-name {
-          font-size: .54rem;
-        }
-
-        #cards .card strong {
-          font-size: .6rem;
-        }
-
-        #cards .card a {
-          font-size: .54rem;
+          font-size: .59rem;
         }
       }
     `;
@@ -465,12 +488,8 @@
      FALLBACK
      ========================================= */
 
-  function fallback(className = "") {
+  function fallback() {
     const span = document.createElement("span");
-
-    if (className) {
-      span.className = className;
-    }
 
     span.textContent = FALLBACK_ICON;
 
@@ -489,19 +508,26 @@
      ========================================= */
 
   function makeImage(filename) {
-    const button = document.createElement("button");
+    const button =
+      document.createElement("button");
 
     button.type = "button";
     button.className = "animal-button";
 
-    const label = iconLabel(filename);
+    const label =
+      iconLabel(filename);
 
     button.title = label;
-    button.setAttribute("aria-label", label);
+    button.setAttribute(
+      "aria-label",
+      label
+    );
 
-    const img = document.createElement("img");
+    const img =
+      document.createElement("img");
 
-    img.className = "animal-icon";
+    img.className =
+      "animal-icon";
 
     img.alt = label;
 
@@ -528,7 +554,9 @@
 
   function songRows() {
     return Array.from(
-      document.querySelectorAll("#song-list .song")
+      document.querySelectorAll(
+        "#song-list .song"
+      )
     );
   }
 
@@ -550,7 +578,7 @@
 
 
   /* =========================================
-     SONG NUMBERS
+     SONG NUMBER
      ========================================= */
 
   function makeSongNumber(row, index) {
@@ -655,31 +683,30 @@
      ========================================= */
 
   function getCardSongIndex(card) {
+
     /*
-      Your working card system creates links like:
+      The working index.html creates:
 
-      "Play song 47"
+      Play song 47
 
-      We deliberately read the NUMBER
-      from the actual card.
+      Play song 183
 
-      This is what makes shuffled cards
-      match their correct animals.
+      etc.
+
+      We read that actual number so the
+      shuffled card always receives the
+      correct animal.
     */
 
     const link =
       card.querySelector("a");
 
-    if (!link) {
-      return -1;
-    }
+    if (!link) return -1;
 
     const match =
       link.textContent.match(/(\d+)/);
 
-    if (!match) {
-      return -1;
-    }
+    if (!match) return -1;
 
     const songNumber =
       Number(match[1]);
@@ -696,10 +723,142 @@
 
 
   /* =========================================
+     TURN CARD INTO FULL BUTTON
+     ========================================= */
+
+  function makeCardClickable(card) {
+
+    if (
+      card.dataset.animalCardReady === "true"
+    ) {
+      return;
+    }
+
+    const link =
+      card.querySelector("a");
+
+    if (!link) return;
+
+
+    card.dataset.animalCardReady = "true";
+
+    card.setAttribute(
+      "role",
+      "button"
+    );
+
+    card.setAttribute(
+      "tabindex",
+      "0"
+    );
+
+
+    const activate = event => {
+
+      /*
+        Don't activate twice if the hidden
+        original link somehow receives the
+        event itself.
+      */
+
+      if (
+        event.target === link
+      ) {
+        event.preventDefault();
+      }
+
+      const songIndex =
+        getCardSongIndex(card);
+
+      if (songIndex < 0) return;
+
+
+      /*
+        The existing index.html already
+        provides playPosition(position).
+
+        We determine which card this is
+        among the six cards and tell the
+        existing playlist to play that
+        position.
+      */
+
+      const allCards =
+        Array.from(
+          document.querySelectorAll(
+            "#cards .card"
+          )
+        );
+
+      const position =
+        allCards.indexOf(card);
+
+      if (
+        position < 0 ||
+        typeof window.playPosition !==
+          "function"
+      ) {
+        /*
+          playPosition is normally scoped
+          inside index.html, so use the
+          original link as the fallback.
+        */
+
+        link.click();
+        return;
+      }
+
+      window.playPosition(position);
+    };
+
+
+    card.addEventListener(
+      "click",
+      activate
+    );
+
+
+    card.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key === "Enter" ||
+          event.key === " "
+        ) {
+
+          event.preventDefault();
+
+          activate(event);
+        }
+      }
+    );
+
+
+    /*
+      Keep the original link invisible.
+      It remains in the card because the
+      existing shuffle code owns it.
+    */
+
+    link.setAttribute(
+      "tabindex",
+      "-1"
+    );
+
+    link.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+  }
+
+
+  /* =========================================
      ADD ANIMAL TO ONE CARD
      ========================================= */
 
   function addAnimalToCard(card) {
+
     if (!card) return;
 
     const songIndex =
@@ -712,23 +871,26 @@
 
     if (!animalFile) return;
 
+    const animalName =
+      iconLabel(animalFile);
+
 
     /*
-      If this card already has an animal,
-      check whether it is the correct one.
+      Make the entire card clickable.
+    */
 
-      This is important because the cards
-      are shuffled and can change.
+    makeCardClickable(card);
+
+
+    /*
+      If the card already has the correct
+      animal, don't rebuild it.
     */
 
     const existing =
       card.querySelector(
-        ".card-animal-icon, .card-animal-fallback"
+        ".card-animal-icon"
       );
-
-    const desiredName =
-      iconLabel(animalFile);
-
 
     if (
       existing &&
@@ -740,14 +902,22 @@
 
 
     /*
-      Remove an old animal if the card
-      has been reused for a different
+      Remove an old animal/name if this
+      card has been reused for another
       shuffled song.
     */
 
-    if (existing) {
-      existing.remove();
-    }
+    card
+      .querySelector(
+        ".card-animal-icon, .card-animal-name"
+      )
+      ?.remove();
+
+    card
+      .querySelector(
+        ".card-animal-name"
+      )
+      ?.remove();
 
 
     const img =
@@ -761,10 +931,10 @@
       encodeURIComponent(animalFile);
 
     img.alt =
-      desiredName;
+      animalName;
 
     img.title =
-      desiredName;
+      animalName;
 
     img.loading = "lazy";
     img.decoding = "async";
@@ -774,22 +944,10 @@
 
 
     img.onerror = () => {
-      img.remove();
-    };
-
-
-    /*
-      Add the animal name underneath it.
-    */
-
-    const oldName =
-      card.querySelector(
-        ".card-animal-name"
+      img.replaceWith(
+        fallback()
       );
-
-    if (oldName) {
-      oldName.remove();
-    }
+    };
 
 
     const name =
@@ -799,29 +957,31 @@
       "card-animal-name";
 
     name.textContent =
-      desiredName;
+      animalName;
 
     name.dataset.songIndex =
       String(songIndex);
 
 
     /*
-      Insert both at the top of the card,
-      keeping the original card link intact.
+      The card contains only the animal
+      and animal name visually.
     */
 
-    const first =
-      card.firstChild;
+    card.innerHTML = "";
 
-    card.insertBefore(
-      img,
-      first
-    );
+    card.appendChild(img);
+    card.appendChild(name);
 
-    card.insertBefore(
-      name,
-      img.nextSibling
-    );
+
+    /*
+      Re-add accessibility/click behavior
+      because innerHTML removed the old link.
+    */
+
+    card.dataset.animalCardReady = "false";
+
+    makeCardClickable(card);
   }
 
 
@@ -830,6 +990,7 @@
      ========================================= */
 
   function addCardIcons() {
+
     if (updatingCards) return;
 
     updatingCards = true;
@@ -841,9 +1002,9 @@
           "#cards .card"
         );
 
-      cards.forEach(card => {
-        addAnimalToCard(card);
-      });
+      cards.forEach(
+        card => addAnimalToCard(card)
+      );
 
     } finally {
 
@@ -927,18 +1088,14 @@
     addStyles();
 
 
-    /*
-      Watch #cards.
-
-      Your index.html creates the six
-      shuffled cards dynamically when
-      CARDS is pressed.
-
-      The observer catches those new cards.
-    */
-
     const cards =
       document.getElementById("cards");
+
+
+    /*
+      Watch for the six shuffled cards
+      being created by index.html.
+    */
 
     if (cards) {
 
@@ -974,16 +1131,14 @@
 
 
     /*
-      Add animals to the chronological
-      song list.
+      Regular song-list animals.
     */
 
     putIcons();
 
 
     /*
-      Also check the cards in case
-      CARDS was already open.
+      Cards, if already visible.
     */
 
     addCardIcons();

@@ -13,17 +13,35 @@
     const style = document.createElement("style");
     style.id = "animal-icon-styles";
     style.textContent = `
-      /* Keep each row inside the viewport: the animal is the play control. */
+      /* Keep each row inside the viewport: the animal is on the right. */
       #song-list .song {
         display: grid;
-        grid-template-columns: 52px minmax(0, 1fr);
+        grid-template-columns: minmax(0, 1fr) 52px;
         gap: 10px;
         width: 100%;
         min-width: 0;
-        align-items: center;
+        align-items: stretch;
       }
       #song-list .song-number { display: none; }
       #song-list .song .play { display: none; }
+      .song-number-button {
+        display: grid;
+        place-items: center;
+        padding: 0;
+        border: 1px solid var(--gold, #d4af37);
+        border-radius: 10px;
+        background: #000;
+        cursor: pointer;
+        overflow: hidden;
+        font-weight: bold;
+        color: var(--gold, #d4af37);
+        font-size: 1rem;
+      }
+      .song-number-button:focus-visible {
+        outline: 2px solid var(--bright-gold, #f5d76e);
+        outline-offset: 2px;
+      }
+      .song-number-button:hover { background: #261334; }
       .song-animal-button {
         display: grid;
         place-items: center;
@@ -59,9 +77,9 @@
       #cards .card .symbol { display: none; }
       #cards .card strong { margin: 0 0 4px; }
       .card-animal-icon { display: block; width: 112px; height: 112px; margin: 0 auto 6px; object-fit: contain; border-radius: 12px; background: #000; padding: 0; }
-      .card-animal-fallback { display: block; width: 112px; height: 112px; margin: 0 auto 6px; padding-top: 28px; box-sizing: border-box; text-align: center; font-size: 3rem; line-height: 1; background: #000; border-radius: 12px; }
+      .card-animal-fallback { display: block; width: 112px; height: 112px; margin: 0 auto 6px; padding-top: 28px; box-sizing: border-box; text-align: center; font-size: 3rem; line-height: 1; background: #000; }
       @media (max-width: 640px) {
-        #song-list .song { grid-template-columns: 46px minmax(0, 1fr); gap: 8px; padding: 8px; }
+        #song-list .song { grid-template-columns: minmax(0, 1fr) 46px; gap: 8px; padding: 8px; }
         .song-animal-button { width: 46px; height: 46px; }
         .song-animal-icon, .song-animal-fallback { width: 42px; height: 42px; flex-basis: 42px; }
         #cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
@@ -98,6 +116,17 @@
 
   function songRows() { return [...document.querySelectorAll("#song-list .song, .song")]; }
 
+  function makeNumberButton(row, songNumber) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "song-number-button";
+    button.setAttribute("aria-label", `Play song ${songNumber}`);
+    button.title = `Play song ${songNumber}`;
+    button.textContent = songNumber;
+    button.addEventListener("click", () => row.querySelector(".play")?.click());
+    return button;
+  }
+
   function makePlayButton(row, icon) {
     const button = document.createElement("button");
     button.type = "button";
@@ -111,9 +140,13 @@
 
   function putIcons() {
     songRows().forEach((row, index) => {
-      if (row.querySelector(".song-animal-button")) return;
+      if (row.querySelector(".song-number-button")) return;
+      const songNumber = index + 1;
       const icon = iconFiles.length ? makeImage(iconFiles[index % iconFiles.length], "song-animal-icon") : fallback();
-      row.prepend(makePlayButton(row, icon));
+      const numberButton = makeNumberButton(row, songNumber);
+      const iconButton = makePlayButton(row, icon);
+      row.prepend(numberButton);
+      row.append(iconButton);
     });
   }
 

@@ -585,30 +585,21 @@
 
     if (!reading) return;
 
-    const heading =
-      reading.querySelector("h2");
-
-    if (!heading) return;
-
     const dock =
       document.querySelector(".player-dock");
 
-    const dockHeight =
+    const readingRect =
+      reading.getBoundingClientRect();
+
+    const dockBottom =
       dock
-        ? dock.getBoundingClientRect().height
+        ? dock.getBoundingClientRect().bottom
         : 0;
 
-    const headingRect =
-      heading.getBoundingClientRect();
-
-    const goldLineY =
-      window.scrollY +
-      headingRect.bottom;
-
     const targetY =
-      goldLineY -
-      dockHeight +
-      70;
+      window.scrollY +
+      readingRect.top -
+      dockBottom;
 
     window.scrollTo({
       top: Math.max(0, targetY),

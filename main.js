@@ -23,15 +23,17 @@
     style.textContent = `
 
       /* =========================================================
-         SONG ROWS
+         SONG ROW
          ========================================================= */
 
       #song-list .song {
+        position: relative;
+
         display: grid;
 
-        /* Number column is OUTSIDE the purple song box.
-           Song content + animal icon stay together. */
-        grid-template-columns: 34px minmax(0, 1fr);
+        /* Only song content + animal button are inside
+           the purple row. */
+        grid-template-columns: minmax(0, 1fr) 62px;
 
         gap: 10px;
 
@@ -40,28 +42,34 @@
 
         align-items: center;
 
-        /* Tighten the row vertically */
-        padding-top: 5px;
-        padding-bottom: 5px;
+        /* Make the purple box tighter vertically */
+        padding-top: 2px;
+        padding-bottom: 2px;
       }
 
 
       /* =========================================================
-         GOLD SONG NUMBERS
+         GOLD NUMBER
+         OUTSIDE THE PURPLE BOX
          ========================================================= */
 
       #song-list .song-number {
-        display: flex;
+        position: absolute;
 
-        align-items: center;
-        justify-content: center;
+        /* Push number completely outside
+           the LEFT side of the purple row */
+        left: -42px;
 
-        width: 34px;
-        min-width: 34px;
+        top: 50%;
+
+        transform: translateY(-50%);
+
+        display: block;
+
+        width: 30px;
 
         color: var(--gold, #d4af37);
 
-        /* BLACK / TRANSPARENT BACKGROUND */
         background: transparent;
 
         border: 0;
@@ -78,36 +86,33 @@
         padding: 0;
         margin: 0;
 
+        text-align: right;
+
         cursor: pointer;
 
-        /* Make sure the number itself doesn't
-           create a purple-looking box. */
-        align-self: center;
+        z-index: 5;
       }
+
 
       #song-list .song-number:hover {
         color: var(--bright-gold, #f5d76e);
+
         text-decoration: none;
       }
+
 
       #song-list .song-number:focus-visible {
         color: var(--bright-gold, #f5d76e);
 
         outline: 1px solid var(--bright-gold, #f5d76e);
+
         outline-offset: 3px;
       }
 
 
       /* =========================================================
-         SONG CONTENT AREA
+         ORIGINAL PLAY BUTTON
          ========================================================= */
-
-      #song-list .song > :not(.song-number) {
-        min-width: 0;
-      }
-
-
-      /* Hide original play button */
 
       #song-list .song .play {
         display: none;
@@ -120,6 +125,7 @@
 
       .song-animal-button {
         display: grid;
+
         place-items: center;
 
         width: 62px;
@@ -131,22 +137,24 @@
         padding: 1px;
 
         border: 1px solid var(--gold, #d4af37);
+
         border-radius: 10px;
 
         background: #000;
 
         cursor: pointer;
+
         overflow: hidden;
 
         box-sizing: border-box;
 
-        /* Keep it on the right side */
         justify-self: end;
       }
 
 
       .song-animal-button:focus-visible {
         outline: 2px solid var(--bright-gold, #f5d76e);
+
         outline-offset: 2px;
       }
 
@@ -156,7 +164,8 @@
       }
 
 
-      /* Animal artwork stays the size you liked */
+      /* Keep the animal artwork at the size
+         you just approved. */
 
       .song-animal-icon,
       .song-animal-fallback {
@@ -309,25 +318,30 @@
 
         #song-list .song {
           grid-template-columns:
-            28px minmax(0, 1fr);
+            minmax(0, 1fr) 54px;
 
           gap: 8px;
 
-          /* Tighter purple rows */
-          padding-top: 4px;
-          padding-bottom: 4px;
+          /* Tight purple box */
+          padding-top: 1px;
+          padding-bottom: 1px;
         }
 
+
+        /* Number stays OUTSIDE the purple box */
 
         #song-list .song-number {
-          width: 28px;
-          min-width: 28px;
+          left: -35px;
+
+          width: 25px;
 
           font-size: 0.8rem;
+
+          text-align: right;
         }
 
 
-        /* Animal button stays the size you liked */
+        /* Keep approved animal size */
 
         .song-animal-button {
           width: 54px;
@@ -359,7 +373,9 @@
         }
 
 
-        /* Cards */
+        /* =====================================================
+           CARDS
+           ===================================================== */
 
         #cards {
           grid-template-columns:
@@ -606,7 +622,7 @@
     songRows().forEach(
       (row, index) => {
 
-        /* Add 1–177 on the LEFT */
+        /* Add 1–177 */
 
         if (
           !row.querySelector(
@@ -647,7 +663,7 @@
             : fallback();
 
 
-        /* Animal goes on the RIGHT */
+        /* Animal stays on RIGHT */
 
         row.append(
           makePlayButton(
@@ -693,6 +709,7 @@
               card.querySelector(
                 "a"
               );
+
 
             const match =
               link?.textContent.match(

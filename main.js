@@ -580,20 +580,20 @@
   }
 
   function positionReading() {
-    const cards =
-      document.getElementById("cards");
+    const reading =
+      document.getElementById("reading");
 
-    if (!cards) return;
+    if (!reading) return;
 
-    const cardsRect =
-      cards.getBoundingClientRect();
+    const readingRect =
+      reading.getBoundingClientRect();
 
-    const cardsDocumentTop =
+    const readingDocumentTop =
       window.scrollY +
-      cardsRect.top;
+      readingRect.top;
 
-    const cardsHeight =
-      cardsRect.height;
+    const readingHeight =
+      readingRect.height;
 
     const viewportHeight =
       window.innerHeight;
@@ -610,9 +610,9 @@
       viewportHeight - dockHeight;
 
     const targetY =
-      cardsDocumentTop -
+      readingDocumentTop -
       dockHeight -
-      (usableHeight - cardsHeight) / 2;
+      (usableHeight - readingHeight) / 2;
 
     window.scrollTo({
       top: Math.max(0, targetY),

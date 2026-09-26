@@ -61,14 +61,23 @@
         position: absolute;
 
         /*
-         * The purple box begins 58px from the
-         * left edge of the song-list area.
+         * The purple box begins at the left edge of the
+         * song row.
          *
-         * This number area now fills that entire
-         * 58px black gutter, so the number is
-         * centered perfectly inside it.
+         * Center the number between the actual LEFT EDGE
+         * OF THE SCREEN and that purple-box edge.
+         *
+         * The main content is centered and maxes out at 900px,
+         * so this calculation automatically adjusts on
+         * wider screens.
          */
-        left: -58px;
+        left: calc(
+          -1 * (
+            (
+              (100vw - min(100vw - 24px, 900px)) / 2 + 58px
+            ) / 2
+          ) - 29px
+        );
 
         top: 50%;
 
@@ -228,24 +237,31 @@
 
         overflow: hidden;
 
-        text-overflow: ellipsis;
+        display: flex;
 
-        white-space: nowrap;
+        flex-direction: column;
 
-        align-self: center;
+        justify-content: center;
 
-        display: block;
+        align-self: stretch;
 
         text-align: left;
 
-        line-height: 1.2;
-
         box-sizing: border-box;
+
+        line-height: 1.2;
+      }
+
+
+      #song-list .song-title {
+        text-overflow: ellipsis;
       }
 
 
       #song-list .song-title small {
         display: block;
+
+        min-width: 0;
 
         overflow: hidden;
 
@@ -370,18 +386,24 @@
         }
 
 
-        /* GOLD NUMBER */
+        /* =====================================================
+           GOLD NUMBER
+           ===================================================== */
 
         #song-list .song-number {
 
           /*
-           * The mobile purple box begins 42px
-           * into the song-list area.
-           *
-           * The number fills that entire gutter
-           * and is centered inside it.
+           * On mobile, center the number between the
+           * actual left edge of the screen and the
+           * beginning of the purple box.
            */
-          left: -42px;
+          left: calc(
+            -1 * (
+              (
+                (100vw - min(100vw - 24px, 900px)) / 2 + 42px
+              ) / 2
+            ) - 21px
+          );
 
           width: 42px;
 
@@ -399,27 +421,37 @@
         }
 
 
-        /* SONG TEXT */
+        /* =====================================================
+           SONG TEXT
+           ===================================================== */
 
         #song-list .song-title {
 
-          align-self: center;
+          min-width: 0;
 
-          display: block;
+          overflow: hidden;
+
+          display: flex;
+
+          flex-direction: column;
+
+          justify-content: center;
+
+          align-self: stretch;
 
           text-align: left;
 
           line-height: 1.2;
 
-          min-width: 0;
-
-          overflow: hidden;
+          box-sizing: border-box;
         }
 
 
         #song-list .song-title small {
 
           display: block;
+
+          min-width: 0;
 
           margin-top: 3px;
 
@@ -433,7 +465,9 @@
         }
 
 
-        /* ANIMAL BUTTON */
+        /* =====================================================
+           ANIMAL BUTTON
+           ===================================================== */
 
         .song-animal-button {
 
@@ -655,14 +689,6 @@
     index
   ) {
 
-    /*
-     * index.html already creates:
-     *
-     * <span class="song-number">1</span>
-     *
-     * So instead of creating another number,
-     * convert that existing span into an <a>.
-     */
     let number =
       row.querySelector(
         ".song-number"
@@ -706,10 +732,6 @@
     }
 
 
-    /*
-     * If a number doesn't exist for some reason,
-     * create one.
-     */
     if (!number) {
 
       number =
@@ -739,9 +761,6 @@
     }
 
 
-    /*
-     * Make sure the click handler exists only once.
-     */
     if (
       number.dataset.playHandler !== "true"
     ) {
@@ -835,19 +854,12 @@
     songRows().forEach(
       (row, index) => {
 
-        /*
-         * Convert the EXISTING number from index.html
-         * into a playable link.
-         */
         makeSongNumber(
           row,
           index
         );
 
 
-        /*
-         * Don't add animal twice.
-         */
         if (
           row.querySelector(
             ".song-animal-button"
@@ -869,9 +881,6 @@
             : fallback();
 
 
-        /*
-         * Animal stays on the far RIGHT.
-         */
         row.append(
           makePlayButton(
             row,
@@ -1140,4 +1149,3 @@
   }
 
 })();
-

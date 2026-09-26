@@ -12,6 +12,7 @@
 
   let iconFiles = [];
   let updatingCards = false;
+  let scrollScheduled = false;
 
   function addStyles() {
     if (document.getElementById("animal-icon-styles")) return;
@@ -125,37 +126,16 @@
         box-sizing: border-box;
       }
 
-      /*
-       * MUSIC READING
-       *
-       * The cards now simply appear where the
-       * Reading section exists in the page.
-       *
-       * No automatic scrolling.
-       * No position calculations.
-       */
-
-      #reading {
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-        overflow: hidden;
-      }
-
       #cards {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 9px;
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
         margin: 0 0 22px;
       }
 
       #cards .card {
         min-width: 0;
         min-height: 0;
-        width: 100%;
         box-sizing: border-box;
         padding: 9px 6px;
         display: flex;
@@ -228,7 +208,6 @@
       }
 
       @media (max-width: 700px) {
-
         #song-list .song {
           grid-template-columns: minmax(0, 1fr) 54px;
           gap: 8px;
@@ -287,7 +266,6 @@
       }
 
       @media (max-width: 380px) {
-
         #cards {
           gap: 5px;
         }
@@ -333,7 +311,6 @@
 
   function makeImage(filename) {
     const button = document.createElement("button");
-
     button.type = "button";
     button.className = "animal-button";
 
@@ -349,9 +326,7 @@
     img.loading = "lazy";
     img.decoding = "async";
 
-    img.src =
-      RAW_PREFIX +
-      encodeURIComponent(filename);
+    img.src = RAW_PREFIX + encodeURIComponent(filename);
 
     img.onerror = () => {
       img.replaceWith(fallback());
@@ -371,8 +346,7 @@
   function playSongFromRow(row) {
     if (!row) return;
 
-    const playButton =
-      row.querySelector(".play");
+    const playButton = row.querySelector(".play");
 
     if (playButton) {
       playButton.click();
@@ -380,8 +354,7 @@
   }
 
   function makeSongNumber(row, index) {
-    const oldNumber =
-      row.querySelector(".song-number");
+    const oldNumber = row.querySelector(".song-number");
 
     if (!oldNumber) return;
 
@@ -389,84 +362,62 @@
       return;
     }
 
-    const numberLink =
-      document.createElement("a");
+    const numberLink = document.createElement("a");
 
-    numberLink.className =
-      "song-number";
-
+    numberLink.className = "song-number";
     numberLink.href = "#";
-
-    numberLink.textContent =
-      oldNumber.textContent.trim();
+    numberLink.textContent = oldNumber.textContent.trim();
 
     numberLink.setAttribute(
       "aria-label",
       `Play song ${index + 1}`
     );
 
-    numberLink.addEventListener(
-      "click",
-      event => {
-        event.preventDefault();
-        playSongFromRow(row);
-      }
-    );
+    numberLink.addEventListener("click", event => {
+      event.preventDefault();
+      playSongFromRow(row);
+    });
 
     oldNumber.replaceWith(numberLink);
   }
 
   function putIcons() {
-    if (!iconFiles.length) return;
-
     const rows = songRows();
 
     rows.forEach((row, index) => {
-
-      if (
-        row.querySelector(".animal-button")
-      ) {
+      if (row.querySelector(".animal-button")) {
         return;
       }
 
       const filename =
-        iconFiles[
-          index % iconFiles.length
-        ];
+        iconFiles[index % iconFiles.length];
 
       if (!filename) return;
 
-      const icon =
-        makeImage(filename);
+      const icon = makeImage(filename);
 
       row.appendChild(icon);
 
-      icon.addEventListener(
-        "click",
-        event => {
-          event.preventDefault();
-          event.stopPropagation();
-          playSongFromRow(row);
-        }
-      );
+      icon.addEventListener("click", event => {
+        event.preventDefault();
+        event.stopPropagation();
+        playSongFromRow(row);
+      });
 
       makeSongNumber(row, index);
     });
   }
 
   function getCardSongIndex(card) {
-    const link =
-      card.querySelector("a");
+    const link = card.querySelector("a");
 
     if (!link) return -1;
 
-    const match =
-      link.textContent.match(/(\d+)/);
+    const match = link.textContent.match(/(\d+)/);
 
     if (!match) return -1;
 
-    const songNumber =
-      Number(match[1]);
+    const songNumber = Number(match[1]);
 
     if (
       !Number.isInteger(songNumber) ||
@@ -481,14 +432,11 @@
   function playCard(card) {
     if (!card) return;
 
-    const link =
-      card.querySelector("a");
+    const link = card.querySelector("a");
 
     if (!link) return;
 
-    if (
-      typeof link.onclick === "function"
-    ) {
+    if (typeof link.onclick === "function") {
       link.onclick({
         preventDefault() {},
         stopPropagation() {}
@@ -497,8 +445,7 @@
       return;
     }
 
-    const songIndex =
-      getCardSongIndex(card);
+    const songIndex = getCardSongIndex(card);
 
     if (
       songIndex >= 0 &&
@@ -512,83 +459,301 @@
     if (!card) return;
 
     if (
-      card.dataset.animalCardReady ===
-      "true"
+      card.dataset.animalCardReady === "true"
     ) {
       return;
     }
 
-    card.addEventListener(
-      "click",
-      event => {
+    card.addEventListener("click", event => {
+      event.preventDefault();
+      event.stopPropagation();
+      playCard(card);
+    });
+
+    card.addEventListener("keydown", event => {
+      if (
+        event.key === "Enter" ||
+        event.key === " "
+      ) {
         event.preventDefault();
         event.stopPropagation();
         playCard(card);
       }
-    );
+    });
 
-    card.addEventListener(
-      "keydown",
-      event => {
-        if (
-          event.key === "Enter" ||
-          event.key === " "
-        ) {
-          event.preventDefault();
-          event.stopPropagation();
-          playCard(card);
-        }
-      }
-    );
-
-    card.setAttribute(
-      "role",
-      "button"
-    );
-
-    card.setAttribute(
-      "tabindex",
-      "0"
-    );
-
+    card.setAttribute("role", "button");
+    card.setAttribute("tabindex", "0");
     card.setAttribute(
       "aria-label",
       "Play this music reading card"
     );
 
-    card.dataset.animalCardReady =
-      "true";
+    card.dataset.animalCardReady = "true";
   }
 
   function addAnimalToCard(card) {
-    if (!card || !iconFiles.length) {
-      return;
-    }
+    if (!card) return;
 
-    const songIndex =
-      getCardSongIndex(card);
+    const songIndex = getCardSongIndex(card);
 
     if (songIndex < 0) return;
 
-    const animalFile =
-      iconFiles[songIndex];
+    const animalFile = iconFiles[songIndex];
 
     if (!animalFile) return;
 
-    const animalName =
-      iconLabel(animalFile);
+    const animalName = iconLabel(animalFile);
 
     if (
-      card.querySelector(
-        ".card-animal-icon"
-      )
+      card.querySelector(".card-animal-icon")
     ) {
       makeCardClickable(card);
       return;
     }
 
-    const symbol =
-      card.querySelector(".symbol");
+    const symbol = card.querySelector(".symbol");
+    const strong = card.querySelector("strong");
+    const link = card.querySelector("a");
 
-    const strong =
-      card.querySelector("strong
+    if (symbol) {
+      symbol.style.display = "none";
+    }
+
+    if (strong) {
+      strong.style.display = "none";
+    }
+
+    if (link) {
+      link.style.display = "none";
+    }
+
+    const img = document.createElement("img");
+
+    img.className = "card-animal-icon";
+
+    img.src =
+      RAW_PREFIX +
+      encodeURIComponent(animalFile);
+
+    img.alt = animalName;
+    img.title = animalName;
+    img.loading = "lazy";
+    img.decoding = "async";
+
+    img.dataset.songIndex =
+      String(songIndex);
+
+    img.onerror = () => {
+      img.replaceWith(fallback());
+    };
+
+    const name = document.createElement("span");
+
+    name.className = "card-animal-name";
+    name.textContent = animalName;
+
+    name.dataset.songIndex =
+      String(songIndex);
+
+    card.appendChild(img);
+    card.appendChild(name);
+
+    makeCardClickable(card);
+  }
+
+  function addCardIcons() {
+    if (updatingCards) return;
+
+    updatingCards = true;
+
+    try {
+      const cardElements =
+        document.querySelectorAll("#cards .card");
+
+      cardElements.forEach(
+        card => addAnimalToCard(card)
+      );
+
+    } finally {
+      updatingCards = false;
+    }
+  }
+
+  function positionReading() {
+    const reading =
+      document.getElementById("reading");
+
+    if (!reading) return;
+
+    const dock =
+      document.querySelector(".player-dock");
+
+    const readingRect =
+      reading.getBoundingClientRect();
+
+    const dockBottom =
+      dock
+        ? dock.getBoundingClientRect().bottom
+        : 0;
+
+    const targetY =
+      window.scrollY +
+      readingRect.top -
+      dockBottom;
+
+    window.scrollTo({
+      top: Math.max(0, targetY),
+      behavior: "smooth"
+    });
+  }
+
+  function scheduleReadingScroll() {
+    if (scrollScheduled) return;
+
+    scrollScheduled = true;
+
+    requestAnimationFrame(() => {
+      scrollScheduled = false;
+
+      requestAnimationFrame(() => {
+        addCardIcons();
+        positionReading();
+      });
+    });
+  }
+
+  function setupCardWatching() {
+    const cards =
+      document.getElementById("cards");
+
+    if (!cards) return;
+
+    const observer =
+      new MutationObserver(
+        mutations => {
+
+          let newCards = false;
+
+          for (const mutation of mutations) {
+            if (
+              mutation.type === "childList" &&
+              mutation.addedNodes.length
+            ) {
+              newCards = true;
+              break;
+            }
+          }
+
+          if (!newCards) return;
+
+          if (!updatingCards) {
+            addCardIcons();
+            scheduleReadingScroll();
+          }
+        }
+      );
+
+    observer.observe(
+      cards,
+      {
+        childList: true,
+        subtree: true
+      }
+    );
+
+    addCardIcons();
+  }
+
+  async function getAnimalFiles() {
+    try {
+      const response =
+        await fetch(
+          API_URL,
+          {
+            headers: {
+              Accept:
+                "application/vnd.github+json"
+            }
+          }
+        );
+
+      if (!response.ok) {
+        throw new Error(
+          `GitHub API error: ${response.status}`
+        );
+      }
+
+      const data =
+        await response.json();
+
+      if (!Array.isArray(data)) {
+        throw new Error(
+          "Unexpected GitHub API response."
+        );
+      }
+
+      return data
+        .filter(
+          item =>
+            item &&
+            item.type === "file"
+        )
+        .map(
+          item =>
+            item.name
+        )
+        .filter(
+          name =>
+            /\.(png|jpg|jpeg|webp|gif)$/i.test(
+              name
+            )
+        )
+        .sort(
+          (a, b) =>
+            a.localeCompare(b)
+        );
+
+    } catch (error) {
+      console.error(
+        "Unable to load animal icons:",
+        error
+      );
+
+      return [];
+    }
+  }
+
+  async function init() {
+    addStyles();
+
+    setupCardWatching();
+
+    iconFiles =
+      await getAnimalFiles();
+
+    if (!iconFiles.length) {
+      console.warn(
+        "No animal icon files were found."
+      );
+
+      return;
+    }
+
+    putIcons();
+    addCardIcons();
+  }
+
+  if (
+    document.readyState ===
+    "loading"
+  ) {
+    document.addEventListener(
+      "DOMContentLoaded",
+      init,
+      { once: true }
+    );
+  } else {
+    init();
+  }
+
+})();

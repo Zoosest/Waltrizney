@@ -58,6 +58,7 @@
 
     .context {
       left:88px;
+      cursor:pointer;
     }
 
     .logo-img {
@@ -263,6 +264,83 @@
       object-fit:contain;
     }
 
+    /* ================================
+       CONTEXT OVERLAY
+       The music player stays alive underneath.
+       ================================ */
+
+    #context-overlay {
+      position:fixed;
+      inset:0;
+      z-index:1000;
+      display:none;
+      overflow-y:auto;
+      background:rgba(0,0,0,.96);
+      padding:18px 12px 40px;
+    }
+
+    #context-overlay.open {
+      display:block;
+    }
+
+    .context-page {
+      width:min(100%,900px);
+      margin:0 auto;
+    }
+
+    .context-close {
+      display:inline-block;
+      border:1px solid var(--gold);
+      border-radius:999px;
+      padding:5px 9px;
+      color:var(--bright-gold);
+      background:#160c1a;
+      font-family:Georgia,"Times New Roman",serif;
+      font-size:.68rem;
+      line-height:1;
+      margin-bottom:14px;
+    }
+
+    .context-close:hover {
+      background:#55208a;
+    }
+
+    .context-page h1 {
+      display:block;
+      color:var(--bright-gold);
+      font-size:1.7rem;
+      text-align:center;
+      border-bottom:1px solid var(--gold);
+      padding-bottom:12px;
+      margin:0 0 22px;
+    }
+
+    .context-page h2 {
+      color:var(--bright-gold);
+      font-size:1.2rem;
+    }
+
+    .context-page p {
+      color:var(--muted);
+      line-height:1.65;
+    }
+
+    .context-footer {
+      margin:18px auto 0;
+      padding:0;
+      background:#fff;
+      text-align:center;
+    }
+
+    .context-footer img {
+      display:block;
+      width:100%;
+      height:auto;
+      max-height:360px;
+      object-fit:contain;
+      margin:0 auto;
+    }
+
     @media(max-width:500px) {
       .top-area {
         padding:0;
@@ -334,6 +412,14 @@
         height:180px;
         max-width:85%;
       }
+
+      #context-overlay {
+        padding:14px 12px 30px;
+      }
+
+      .context-page h1 {
+        font-size:1.35rem;
+      }
     }
   </style>
 </head>
@@ -355,7 +441,12 @@
       rel="noopener"
     >♥ Donate</a>
 
-    <a class="context" href="context.html">✦ Context</a>
+    <button
+      class="context"
+      id="context-button"
+      type="button"
+      aria-label="Open Context"
+    >✦ Context</button>
 
   </section>
 
@@ -398,6 +489,116 @@
   <footer>
     <img src="./assets/curse.png" alt="Curse" />
   </footer>
+
+
+  <!-- ==========================================
+       CONTEXT
+       This is now part of the same page.
+       Opening it does NOT stop YouTube.
+       ========================================== -->
+
+  <section
+    id="context-overlay"
+    aria-label="Context"
+    aria-hidden="true"
+  >
+    <div class="context-page">
+
+      <button
+        class="context-close"
+        id="context-close"
+        type="button"
+      >← Back to the music</button>
+
+      <h1>CONTEXT</h1>
+
+      <section>
+        <h2>About this album</h2>
+
+        <p>
+          For many of us, the pandemic was a hard time.
+        </p>
+
+        <p>
+          It felt like something was taken away from humanity — something we haven't quite gotten back yet.
+        </p>
+
+        <p>
+          For me, one way of trying to process it was to make music. I started making songs every day. Therapy songs.
+        </p>
+
+        <p>
+          Some are funny.
+        </p>
+
+        <p>
+          Some are sad.
+        </p>
+
+        <p>
+          Some are hopeful.
+        </p>
+
+        <p>
+          Some are angry.
+        </p>
+
+        <p>
+          Some are weird.
+        </p>
+
+        <p>
+          Some are probably just bad. 😸
+        </p>
+
+        <p>
+          But I made them anyway.
+        </p>
+
+        <p>
+          This album is basically what came out of that process.
+        </p>
+      </section>
+
+      <section>
+        <h2>WARMLINES</h2>
+
+        <p>
+          One thing that helped me a lot while I was making these songs was talking to people on warmlines.
+        </p>
+
+        <p>
+          If you've never heard of them, they're peer-support phone lines where you can talk with someone when you need to talk — even if you're not in an immediate crisis.
+        </p>
+
+        <p>
+          Many are free and confidential, and they're often staffed by people with their own lived experience.
+        </p>
+
+        <p>
+          I didn't know they existed for a long time.
+        </p>
+
+        <p>
+          I'm really glad I found them.
+        </p>
+
+        <p>
+          Maybe they'll help you, too.
+        </p>
+
+        <p>
+          Find a Warmline →
+        </p>
+      </section>
+
+      <footer class="context-footer">
+        <img src="./assets/Hugh.jpg" alt="Hugh" loading="lazy" />
+      </footer>
+
+    </div>
+  </section>
+
 
   <script src="https://www.youtube.com/iframe_api"></script>
 
@@ -777,6 +978,41 @@
 
       updateButtons();
     };
+
+
+    /* ==========================================
+       CONTEXT BUTTON
+       Opens Context without leaving this page.
+       Therefore the YouTube player keeps playing.
+       ========================================== */
+
+    const contextButton = $('#context-button');
+    const contextOverlay = $('#context-overlay');
+    const contextClose = $('#context-close');
+
+    function openContext() {
+      contextOverlay.classList.add('open');
+      contextOverlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      contextClose.focus();
+    }
+
+    function closeContext() {
+      contextOverlay.classList.remove('open');
+      contextOverlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      contextButton.focus();
+    }
+
+    contextButton.addEventListener('click', openContext);
+    contextClose.addEventListener('click', closeContext);
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && contextOverlay.classList.contains('open')) {
+        closeContext();
+      }
+    });
+
 
     updateButtons();
   </script>

@@ -618,7 +618,7 @@
 
 
   /* =========================================
-     SONG ROWS
+     SONG ROW ANIMAL ICONS
      ========================================= */
 
   function putIcons() {
@@ -704,18 +704,15 @@
 
 
     /*
-      IMPORTANT:
+      Do NOT use link.click().
 
-      We DO NOT use link.click() here.
+      The original link contains the
+      correct shuffled Music Reading
+      position.
 
-      link.click() would bubble back into
-      the card and trigger this function again.
-
-      Instead, we directly call the existing
-      onclick function that index.html created.
-
-      That preserves the shuffled card's
-      actual position in the Music Reading.
+      Calling its onclick directly avoids
+      the card click handler looping back
+      into itself.
     */
 
     if (typeof link.onclick === "function") {
@@ -731,9 +728,6 @@
 
     /*
       Emergency fallback.
-
-      If the original onclick somehow isn't
-      available, use the actual song index.
     */
 
     const songIndex =
@@ -857,11 +851,11 @@
 
 
     /*
-      Hide the original contents.
+      Hide the original card contents.
 
-      We keep the original link alive
-      because its onclick contains the
-      actual shuffled-song logic.
+      Keep the original link alive because
+      its onclick contains the actual
+      shuffled-song logic.
     */
 
     const symbol =
@@ -1003,36 +997,22 @@
 
 
     /*
-      The gold line is the bottom border
-      of "Your Music Reading".
+      Stop with the beginning of
+      "Your Music Reading" at the top
+      of the visible content area.
 
-      Put that gold line immediately
-      below the sticky player.
+      The small 6px offset keeps the
+      heading from touching the very
+      top edge of the screen.
     */
 
-    const dock =
-      document.querySelector(
-        ".player-dock"
-      );
-
-    const dockHeight =
-      dock
-        ? dock.getBoundingClientRect().height
-        : 0;
-
-
-    const headingRect =
+    const rect =
       heading.getBoundingClientRect();
 
-    const goldLineY =
-      window.scrollY +
-      headingRect.bottom;
-
-
     const targetY =
-      goldLineY -
-      dockHeight -
-      2;
+      window.scrollY +
+      rect.top -
+      6;
 
 
     window.scrollTo({
@@ -1092,12 +1072,11 @@
         () => {
 
           /*
-            index.html does the actual
-            six-song shuffle first.
+            Let index.html create the
+            shuffled six cards first.
 
-            Then we decorate those exact
-            six cards with the matching
-            animal icons.
+            Then decorate them and scroll
+            to the Music Reading heading.
           */
 
           setTimeout(

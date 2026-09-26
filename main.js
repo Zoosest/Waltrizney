@@ -28,18 +28,31 @@
 
       #song-list .song {
         display: grid;
-        grid-template-columns: 34px minmax(0, 1fr) 62px;
+
+        /* Number column is OUTSIDE the purple song box.
+           Song content + animal icon stay together. */
+        grid-template-columns: 34px minmax(0, 1fr);
+
         gap: 10px;
+
         width: 100%;
         min-width: 0;
+
         align-items: center;
+
+        /* Tighten the row vertically */
+        padding-top: 5px;
+        padding-bottom: 5px;
       }
 
 
-      /* GOLD SONG NUMBERS ON THE LEFT */
+      /* =========================================================
+         GOLD SONG NUMBERS
+         ========================================================= */
 
       #song-list .song-number {
         display: flex;
+
         align-items: center;
         justify-content: center;
 
@@ -47,6 +60,8 @@
         min-width: 34px;
 
         color: var(--gold, #d4af37);
+
+        /* BLACK / TRANSPARENT BACKGROUND */
         background: transparent;
 
         border: 0;
@@ -54,14 +69,20 @@
         box-shadow: none;
 
         text-decoration: none;
+
         font-weight: 700;
         font-size: 0.9rem;
+
         line-height: 1;
 
         padding: 0;
         margin: 0;
 
         cursor: pointer;
+
+        /* Make sure the number itself doesn't
+           create a purple-looking box. */
+        align-self: center;
       }
 
       #song-list .song-number:hover {
@@ -71,13 +92,22 @@
 
       #song-list .song-number:focus-visible {
         color: var(--bright-gold, #f5d76e);
+
         outline: 1px solid var(--bright-gold, #f5d76e);
         outline-offset: 3px;
       }
 
 
-      /* Hide the original play button.
-         The animal button handles playing the song. */
+      /* =========================================================
+         SONG CONTENT AREA
+         ========================================================= */
+
+      #song-list .song > :not(.song-number) {
+        min-width: 0;
+      }
+
+
+      /* Hide original play button */
 
       #song-list .song .play {
         display: none;
@@ -85,7 +115,7 @@
 
 
       /* =========================================================
-         ANIMAL BUTTON ON THE RIGHT
+         ANIMAL BUTTON
          ========================================================= */
 
       .song-animal-button {
@@ -109,20 +139,24 @@
         overflow: hidden;
 
         box-sizing: border-box;
+
+        /* Keep it on the right side */
+        justify-self: end;
       }
+
 
       .song-animal-button:focus-visible {
         outline: 2px solid var(--bright-gold, #f5d76e);
         outline-offset: 2px;
       }
 
+
       .song-animal-button:hover {
         background: #261334;
       }
 
 
-      /* Make the actual animal image fill the button
-         while remaining perfectly square. */
+      /* Animal artwork stays the size you liked */
 
       .song-animal-icon,
       .song-animal-fallback {
@@ -146,28 +180,38 @@
         box-sizing: border-box;
       }
 
+
       .song-animal-fallback {
         display: grid;
+
         place-items: center;
 
         font-size: 2rem;
+
         line-height: 1;
       }
 
 
-      /* SONG TEXT */
+      /* =========================================================
+         SONG TEXT
+         ========================================================= */
 
       .song-title {
         min-width: 0;
 
         overflow: hidden;
+
         text-overflow: ellipsis;
+
         white-space: nowrap;
       }
 
+
       .song-title small {
         overflow: hidden;
+
         text-overflow: ellipsis;
+
         white-space: nowrap;
       }
 
@@ -178,12 +222,17 @@
 
       #cards {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+
+        grid-template-columns:
+          repeat(3, minmax(0, 1fr));
+
         gap: 10px;
       }
 
+
       #cards .card {
         min-height: 0;
+
         height: auto;
 
         padding: 10px 8px;
@@ -191,14 +240,19 @@
         background: #000;
 
         display: flex;
+
         flex-direction: column;
+
         justify-content: space-between;
+
         align-items: center;
       }
+
 
       #cards .card .symbol {
         display: none;
       }
+
 
       #cards .card strong {
         margin: 0 0 4px;
@@ -222,6 +276,7 @@
         padding: 0;
       }
 
+
       .card-animal-fallback {
         display: block;
 
@@ -237,6 +292,7 @@
         text-align: center;
 
         font-size: 3rem;
+
         line-height: 1;
 
         background: #000;
@@ -252,14 +308,16 @@
       @media (max-width: 640px) {
 
         #song-list .song {
-          grid-template-columns: 28px minmax(0, 1fr) 54px;
+          grid-template-columns:
+            28px minmax(0, 1fr);
+
           gap: 8px;
 
-          padding: 8px;
+          /* Tighter purple rows */
+          padding-top: 4px;
+          padding-bottom: 4px;
         }
 
-
-        /* Smaller gold number column */
 
         #song-list .song-number {
           width: 28px;
@@ -269,8 +327,7 @@
         }
 
 
-        /* Larger animal button while still fitting
-           comfortably inside the purple row */
+        /* Animal button stays the size you liked */
 
         .song-animal-button {
           width: 54px;
@@ -296,6 +353,7 @@
           border-radius: 6px;
         }
 
+
         .song-animal-fallback {
           font-size: 1.8rem;
         }
@@ -304,13 +362,17 @@
         /* Cards */
 
         #cards {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
+          grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
           gap: 8px;
         }
+
 
         #cards .card {
           padding: 8px 5px;
         }
+
 
         .card-animal-icon,
         .card-animal-fallback {
@@ -318,8 +380,10 @@
           height: 82px;
         }
 
+
         .card-animal-fallback {
           padding-top: 20px;
+
           font-size: 2.3rem;
         }
       }
@@ -335,9 +399,18 @@
 
   function iconLabel(filename) {
     return filename
-      .replace(/\.(png|jpe?g|webp|gif)$/i, "")
-      .replace(/[-_]+/g, " ")
-      .replace(/\b\w/g, letter => letter.toUpperCase());
+      .replace(
+        /\.(png|jpe?g|webp|gif)$/i,
+        ""
+      )
+      .replace(
+        /[-_]+/g,
+        " "
+      )
+      .replace(
+        /\b\w/g,
+        letter => letter.toUpperCase()
+      );
   }
 
 
@@ -345,11 +418,17 @@
      FALLBACK ICON
      ========================================================= */
 
-  function fallback(className = "song-animal-fallback") {
-    const element = document.createElement("span");
+  function fallback(
+    className = "song-animal-fallback"
+  ) {
+    const element =
+      document.createElement("span");
 
-    element.className = className;
-    element.textContent = FALLBACK_ICON;
+    element.className =
+      className;
+
+    element.textContent =
+      FALLBACK_ICON;
 
     element.setAttribute(
       "aria-label",
@@ -364,22 +443,36 @@
      MAKE ANIMAL IMAGE
      ========================================================= */
 
-  function makeImage(file, className) {
-    const image = document.createElement("img");
+  function makeImage(
+    file,
+    className
+  ) {
+    const image =
+      document.createElement("img");
 
-    image.className = className;
+    image.className =
+      className;
 
     image.src =
       RAW_PREFIX +
-      encodeURIComponent(file.name);
+      encodeURIComponent(
+        file.name
+      );
 
     image.alt =
-      iconLabel(file.name);
+      iconLabel(
+        file.name
+      );
 
-    image.loading = "lazy";
-    image.decoding = "async";
+    image.loading =
+      "lazy";
+
+    image.decoding =
+      "async";
+
 
     image.onerror = () => {
+
       image.replaceWith(
         fallback(
           className.replace(
@@ -388,7 +481,9 @@
           )
         )
       );
+
     };
+
 
     return image;
   }
@@ -411,14 +506,18 @@
      SONG NUMBER
      ========================================================= */
 
-  function makeSongNumber(row, index) {
+  function makeSongNumber(
+    row,
+    index
+  ) {
     const number =
       document.createElement("a");
 
     number.className =
       "song-number";
 
-    number.href = "#";
+    number.href =
+      "#";
 
     number.textContent =
       String(index + 1);
@@ -431,16 +530,20 @@
     number.title =
       `Play song ${index + 1}`;
 
+
     number.addEventListener(
       "click",
       event => {
+
         event.preventDefault();
 
         row
           .querySelector(".play")
           ?.click();
+
       }
     );
+
 
     return number;
   }
@@ -450,11 +553,17 @@
      ANIMAL PLAY BUTTON
      ========================================================= */
 
-  function makePlayButton(row, icon) {
+  function makePlayButton(
+    row,
+    icon
+  ) {
     const button =
-      document.createElement("button");
+      document.createElement(
+        "button"
+      );
 
-    button.type = "button";
+    button.type =
+      "button";
 
     button.className =
       "song-animal-button";
@@ -467,16 +576,22 @@
     button.title =
       "Play song";
 
-    button.append(icon);
+    button.append(
+      icon
+    );
+
 
     button.addEventListener(
       "click",
       () => {
+
         row
           .querySelector(".play")
           ?.click();
+
       }
     );
+
 
     return button;
   }
@@ -491,23 +606,25 @@
     songRows().forEach(
       (row, index) => {
 
-        /* Add 1–177 down the LEFT side */
+        /* Add 1–177 on the LEFT */
 
         if (
           !row.querySelector(
             ".song-number"
           )
         ) {
+
           row.prepend(
             makeSongNumber(
               row,
               index
             )
           );
+
         }
 
 
-        /* Don't add the animal twice */
+        /* Don't add animal twice */
 
         if (
           row.querySelector(
@@ -538,6 +655,7 @@
             icon
           )
         );
+
       }
     );
   }
@@ -549,9 +667,14 @@
 
   function addCardIcons() {
 
-    if (updatingCards) return;
+    if (
+      updatingCards
+    ) return;
 
-    updatingCards = true;
+
+    updatingCards =
+      true;
+
 
     try {
 
@@ -563,96 +686,117 @@
         .querySelectorAll(
           "#cards .card"
         )
-        .forEach(card => {
+        .forEach(
+          card => {
 
-          const link =
-            card.querySelector("a");
+            const link =
+              card.querySelector(
+                "a"
+              );
 
-          const match =
-            link?.textContent.match(
-              /(\d+)/
-            );
-
-          const songIndex =
-            match
-              ? Number(match[1]) - 1
-              : -1;
+            const match =
+              link?.textContent.match(
+                /(\d+)/
+              );
 
 
-          const animalFile =
-            iconFiles[songIndex];
-
-          const heading =
-            card.querySelector(
-              "strong"
-            );
-
-
-          const label =
-            animalFile
-              ? iconLabel(
-                  animalFile.name
-                )
-              : "Animal";
+            const songIndex =
+              match
+                ? Number(
+                    match[1]
+                  ) - 1
+                : -1;
 
 
-          if (
-            heading &&
-            heading.textContent !==
-              label
-          ) {
-            heading.textContent =
-              label;
-          }
+            const animalFile =
+              iconFiles[
+                songIndex
+              ];
 
 
-          card
-            .querySelector(".symbol")
-            ?.remove();
+            const heading =
+              card.querySelector(
+                "strong"
+              );
 
 
-          if (
-            card.querySelector(
-              ".card-animal-icon, .card-animal-fallback"
-            )
-          ) {
-            return;
-          }
+            const label =
+              animalFile
+                ? iconLabel(
+                    animalFile.name
+                  )
+                : "Animal";
 
 
-          const rowIcon =
-            rows[songIndex]
-              ?.querySelector(
+            if (
+              heading &&
+              heading.textContent !==
+                label
+            ) {
+
+              heading.textContent =
+                label;
+
+            }
+
+
+            card
+              .querySelector(
+                ".symbol"
+              )
+              ?.remove();
+
+
+            if (
+              card.querySelector(
+                ".card-animal-icon, .card-animal-fallback"
+              )
+            ) {
+              return;
+            }
+
+
+            const rowIcon =
+              rows[
+                songIndex
+              ]?.querySelector(
                 ".song-animal-icon, .song-animal-fallback"
               );
 
 
-          const icon =
-            rowIcon
-              ? rowIcon.cloneNode(true)
-              : animalFile
-                ? makeImage(
-                    animalFile,
-                    "card-animal-icon"
+            const icon =
+              rowIcon
+                ? rowIcon.cloneNode(
+                    true
                   )
-                : fallback(
-                    "card-animal-fallback"
-                  );
+                : animalFile
+                  ? makeImage(
+                      animalFile,
+                      "card-animal-icon"
+                    )
+                  : fallback(
+                      "card-animal-fallback"
+                    );
 
 
-          icon.className =
-            rowIcon
-              ? "card-animal-icon"
-              : icon.className;
+            icon.className =
+              rowIcon
+                ? "card-animal-icon"
+                : icon.className;
 
 
-          card.prepend(icon);
-        });
+            card.prepend(
+              icon
+            );
+
+          }
+        );
 
 
     } finally {
 
-      updatingCards = false;
+      updatingCards =
+        false;
 
     }
   }
@@ -688,8 +832,6 @@
     }
 
 
-    /* Load animal icons from GitHub */
-
     try {
 
       const response =
@@ -719,7 +861,8 @@
           .filter(
             file =>
               file &&
-              file.type === "file" &&
+              file.type ===
+                "file" &&
               /\.(png|jpe?g|webp|gif)$/i.test(
                 file.name
               )
@@ -731,7 +874,6 @@
                 b.name
               )
           );
-
 
     } catch (error) {
 
@@ -762,7 +904,9 @@
     document.addEventListener(
       "DOMContentLoaded",
       init,
-      { once: true }
+      {
+        once: true
+      }
     );
 
   } else {

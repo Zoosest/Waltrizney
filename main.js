@@ -17,13 +17,14 @@
 
     style.textContent = `
       /* SONG ROWS */
+
       #song-list .song {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-columns: minmax(0, 1fr) 52px;
         gap: 10px;
         width: 100%;
         min-width: 0;
-        align-items: stretch;
+        align-items: center;
       }
 
       #song-list .song-number {
@@ -34,18 +35,17 @@
         display: none;
       }
 
-      /* Animal button sits on the RIGHT and fills the row vertically. */
+      /* Animal button stays compact and square on the RIGHT. */
       .song-animal-button {
         display: grid;
         place-items: center;
-        align-self: stretch;
-        width: auto;
-        aspect-ratio: 1 / 1;
-        min-width: 0;
-        height: auto;
-        padding: 2px;
+        width: 52px;
+        height: 52px;
+        min-width: 52px;
+        min-height: 52px;
+        padding: 1px;
         border: 1px solid var(--gold, #d4af37);
-        border-radius: 8px;
+        border-radius: 10px;
         background: #000;
         cursor: pointer;
         overflow: hidden;
@@ -60,17 +60,16 @@
         background: #261334;
       }
 
-      /* PNG stays square and fits completely inside the button. */
+      /* PNG fills the square button without being stretched. */
       .song-animal-icon,
       .song-animal-fallback {
         display: block;
-        width: 100%;
-        height: 100%;
-        min-width: 0;
-        min-height: 0;
-        aspect-ratio: 1 / 1;
+        width: 48px;
+        height: 48px;
+        max-width: 100%;
+        max-height: 100%;
         object-fit: contain;
-        border-radius: 6px;
+        border-radius: 8px;
         background: #000;
         padding: 0;
       }
@@ -78,7 +77,7 @@
       .song-animal-fallback {
         display: grid;
         place-items: center;
-        font-size: 1.7rem;
+        font-size: 1.9rem;
         line-height: 1;
       }
 
@@ -154,30 +153,31 @@
       @media (max-width: 640px) {
 
         #song-list .song {
-          grid-template-columns: minmax(0, 1fr) auto;
+          grid-template-columns: minmax(0, 1fr) 46px;
           gap: 8px;
           padding: 8px;
         }
 
         .song-animal-button {
-          width: auto;
-          aspect-ratio: 1 / 1;
-          height: auto;
-          min-width: 0;
-          padding: 2px;
-          border-radius: 7px;
+          width: 46px;
+          height: 46px;
+          min-width: 46px;
+          min-height: 46px;
+          padding: 1px;
+          border-radius: 8px;
         }
 
         .song-animal-icon,
         .song-animal-fallback {
-          width: 100%;
-          height: 100%;
-          aspect-ratio: 1 / 1;
-          border-radius: 5px;
+          width: 42px;
+          height: 42px;
+          max-width: 100%;
+          max-height: 100%;
+          border-radius: 6px;
         }
 
         .song-animal-fallback {
-          font-size: 1.5rem;
+          font-size: 1.7rem;
         }
 
         #cards {
@@ -287,7 +287,9 @@
        * Append instead of prepend.
        * This puts the animal button on the RIGHT side of the row.
        */
-      row.append(makePlayButton(row, icon));
+      row.append(
+        makePlayButton(row, icon)
+      );
     });
   }
 
@@ -335,8 +337,13 @@
         const icon = rowIcon
           ? rowIcon.cloneNode(true)
           : animalFile
-            ? makeImage(animalFile, "card-animal-icon")
-            : fallback("card-animal-fallback");
+            ? makeImage(
+                animalFile,
+                "card-animal-icon"
+              )
+            : fallback(
+                "card-animal-fallback"
+              );
 
         icon.className = rowIcon
           ? "card-animal-icon"
@@ -358,7 +365,9 @@
     const cards = document.getElementById("cards");
 
     if (cards) {
-      new MutationObserver(addCardIcons).observe(
+      new MutationObserver(
+        addCardIcons
+      ).observe(
         cards,
         {
           childList: true,
@@ -389,11 +398,15 @@
           file =>
             file &&
             file.type === "file" &&
-            /\.(png|jpe?g|webp|gif)$/i.test(file.name)
+            /\.(png|jpe?g|webp|gif)$/i.test(
+              file.name
+            )
         )
         .sort(
           (a, b) =>
-            a.name.localeCompare(b.name)
+            a.name.localeCompare(
+              b.name
+            )
         );
 
     } catch (error) {

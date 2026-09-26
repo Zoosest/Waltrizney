@@ -579,24 +579,18 @@
     }
   }
 
+  /*
+    SCROLL BEHAVIOR
+
+    When CARDS creates the Music Reading section,
+    scroll so the "YOUR MUSIC READING" heading sits
+    just below the sticky player/toolbar.
+  */
   function positionReading() {
     const reading =
       document.getElementById("reading");
 
     if (!reading) return;
-
-    const readingRect =
-      reading.getBoundingClientRect();
-
-    const readingDocumentTop =
-      window.scrollY +
-      readingRect.top;
-
-    const readingHeight =
-      readingRect.height;
-
-    const viewportHeight =
-      window.innerHeight;
 
     const dock =
       document.querySelector(".player-dock");
@@ -606,167 +600,13 @@
         ? dock.getBoundingClientRect().height
         : 0;
 
-    const usableHeight =
-      viewportHeight - dockHeight;
+    const readingRect =
+      reading.getBoundingClientRect();
+
+    const readingDocumentTop =
+      window.scrollY +
+      readingRect.top;
 
     const targetY =
       readingDocumentTop -
-      dockHeight -
-      (usableHeight - readingHeight) / 2;
-
-    window.scrollTo({
-      top: Math.max(0, targetY),
-      behavior: "smooth"
-    });
-  }
-
-  function scheduleReadingScroll() {
-    if (scrollScheduled) return;
-
-    scrollScheduled = true;
-
-    requestAnimationFrame(() => {
-      scrollScheduled = false;
-
-      requestAnimationFrame(() => {
-        addCardIcons();
-        positionReading();
-      });
-    });
-  }
-
-  function setupCardWatching() {
-    const cards =
-      document.getElementById("cards");
-
-    if (!cards) return;
-
-    const observer =
-      new MutationObserver(
-        mutations => {
-
-          let newCards = false;
-
-          for (const mutation of mutations) {
-            if (
-              mutation.type === "childList" &&
-              mutation.addedNodes.length
-            ) {
-              newCards = true;
-              break;
-            }
-          }
-
-          if (!newCards) return;
-
-          if (!updatingCards) {
-            addCardIcons();
-            scheduleReadingScroll();
-          }
-        }
-      );
-
-    observer.observe(
-      cards,
-      {
-        childList: true,
-        subtree: true
-      }
-    );
-
-    addCardIcons();
-  }
-
-  async function getAnimalFiles() {
-    try {
-      const response =
-        await fetch(
-          API_URL,
-          {
-            headers: {
-              Accept:
-                "application/vnd.github+json"
-            }
-          }
-        );
-
-      if (!response.ok) {
-        throw new Error(
-          `GitHub API error: ${response.status}`
-        );
-      }
-
-      const data =
-        await response.json();
-
-      if (!Array.isArray(data)) {
-        throw new Error(
-          "Unexpected GitHub API response."
-        );
-      }
-
-      return data
-        .filter(
-          item =>
-            item &&
-            item.type === "file"
-        )
-        .map(
-          item =>
-            item.name
-        )
-        .filter(
-          name =>
-            /\.(png|jpg|jpeg|webp|gif)$/i.test(
-              name
-            )
-        )
-        .sort(
-          (a, b) =>
-            a.localeCompare(b)
-        );
-
-    } catch (error) {
-      console.error(
-        "Unable to load animal icons:",
-        error
-      );
-
-      return [];
-    }
-  }
-
-  async function init() {
-    addStyles();
-
-    setupCardWatching();
-
-    iconFiles =
-      await getAnimalFiles();
-
-    if (!iconFiles.length) {
-      console.warn(
-        "No animal icon files were found."
-      );
-
-      return;
-    }
-
-    putIcons();
-    addCardIcons();
-  }
-
-  if (
-    document.readyState ===
-    "loading"
-  ) {
-    document.addEventListener(
-      "DOMContentLoaded",
-      init,
-      { once: true }
-    );
-  } else {
-    init();
-  }
-
-})();
+     

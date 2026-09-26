@@ -579,18 +579,6 @@
     }
   }
 
-  /*
-   * Put the Reading section directly underneath
-   * the sticky player.
-   *
-   * IMPORTANT:
-   * We use the player's HEIGHT here.
-   * We do NOT use its current screen position.
-   *
-   * That means the calculation stays correct
-   * whether the user is at the very top of the page
-   * or already scrolled somewhere else.
-   */
   function positionReading() {
     const reading =
       document.getElementById("reading");
@@ -603,24 +591,15 @@
     const readingRect =
       reading.getBoundingClientRect();
 
-    const dockHeight =
+    const dockBottom =
       dock
-        ? dock.getBoundingClientRect().height
+        ? dock.getBoundingClientRect().bottom
         : 0;
 
-    /*
-     * Convert the Reading section's current
-     * viewport position into its absolute document
-     * position, then subtract the sticky player's
-     * actual height.
-     */
-    const readingDocumentTop =
-      window.scrollY +
-      readingRect.top;
-
     const targetY =
-      readingDocumentTop -
-      dockHeight;
+      window.scrollY +
+      readingRect.top -
+      dockBottom;
 
     window.scrollTo({
       top: Math.max(0, targetY),
@@ -695,3 +674,86 @@
               Accept:
                 "application/vnd.github+json"
             }
+          }
+        );
+
+      if (!response.ok) {
+        throw new Error(
+          `GitHub API error: ${response.status}`
+        );
+      }
+
+      const data =
+        await response.json();
+
+      if (!Array.isArray(data)) {
+        throw new Error(
+          "Unexpected GitHub API response."
+        );
+      }
+
+      return data
+        .filter(
+          item =>
+            item &&
+            item.type === "file"
+        )
+        .map(
+          item =>
+            item.name
+        )
+        .filter(
+          name =>
+            /\.(png|jpg|jpeg|webp|gif)$/i.test(
+              name
+            )
+        )
+        .sort(
+          (a, b) =>
+            a.localeCompare(b)
+        );
+
+    } catch (error) {
+      console.error(
+        "Unable to load animal icons:",
+        error
+      );
+
+      return [];
+    }
+  }
+
+  async function init() {
+    addStyles();
+
+    setupCardWatching();
+
+    iconFiles =
+      await getAnimalFiles();
+
+    if (!iconFiles.length) {
+      console.warn(
+        "No animal icon files were found."
+      );
+
+      return;
+    }
+
+    putIcons();
+    addCardIcons();
+  }
+
+  if (
+    document.readyState ===
+    "loading"
+  ) {
+    document.addEventListener(
+      "DOMContentLoaded",
+      init,
+      { once: true }
+    );
+  } else {
+    init();
+  }
+
+})();

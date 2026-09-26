@@ -1,26 +1,26 @@
 /* Animal icons for song rows + shuffled Music Reading cards. */
 (() => {
-  "use strict";
+  "use strict"; 
 
   const API_URL =
-    "https://api.github.com/repos/the-zeusest/waltrizney-/contents/assets/animal-icons?ref=main";
+    "https://api.github.com/repos/the-zeusest/waltrizney-/contents/assets/animal-icons?ref=main"; 
 
   const RAW_PREFIX =
-    "https://raw.githubusercontent.com/the-zeusest/waltrizney-/main/assets/animal-icons/";
+    "https://raw.githubusercontent.com/the-zeusest/waltrizney-/main/assets/animal-icons/"; 
 
-  const FALLBACK_ICON = "🐾";
+  const FALLBACK_ICON = "🐾"; 
 
   let iconFiles = [];
   let updatingCards = false;
-  let scrollScheduled = false;
+  let scrollScheduled = false; 
 
   function addStyles() {
-    if (document.getElementById("animal-icon-styles")) return;
+    if (document.getElementById("animal-icon-styles")) return; 
 
     const style = document.createElement("style");
-    style.id = "animal-icon-styles";
+    style.id = "animal-icon-styles"; 
 
-    style.textContent = `
+    style.textContent = ` 
 
       #song-list .song {
         position: relative;
@@ -36,7 +36,7 @@
         padding-left: 10px;
         padding-right: 10px;
         box-sizing: border-box;
-      }
+      } 
 
       #song-list .song-number {
         position: absolute;
@@ -68,16 +68,16 @@
         cursor: pointer;
         z-index: 0 !important;
         box-sizing: border-box;
-      }
+      } 
 
       #song-list .song-number:hover,
       #song-list .song-number:focus {
         color: var(--bright-gold, #f5d76e);
-      }
+      } 
 
       #song-list .song .play {
         display: none;
-      }
+      } 
 
       #song-list .song-title {
         min-width: 0;
@@ -89,7 +89,7 @@
         text-align: left;
         box-sizing: border-box;
         line-height: 1.2;
-      }
+      } 
 
       #song-list .song-title small {
         display: block;
@@ -99,7 +99,7 @@
         white-space: nowrap;
         margin-top: 3px;
         line-height: 1.2;
-      }
+      } 
 
       #song-list .animal-button {
         width: 62px;
@@ -113,7 +113,7 @@
         background: transparent;
         cursor: pointer;
         box-sizing: border-box;
-      }
+      } 
 
       #song-list .animal-button img {
         display: block;
@@ -124,14 +124,14 @@
         border: 0;
         background: transparent;
         box-sizing: border-box;
-      }
+      } 
 
       #cards {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 9px;
         margin: 0 0 22px;
-      }
+      } 
 
       #cards .card {
         min-width: 0;
@@ -155,28 +155,28 @@
           background .12s ease,
           border-color .12s ease;
         -webkit-tap-highlight-color: transparent;
-      }
+      } 
 
       #cards .card:hover {
         background: linear-gradient(145deg, #2b1540, #100817);
         border-color: var(--bright-gold, #f5d76e);
         transform: translateY(-2px);
-      }
+      } 
 
       #cards .card:active {
         transform: translateY(0);
-      }
+      } 
 
       #cards .card:focus-visible {
         outline: 2px solid var(--bright-gold, #f5d76e);
         outline-offset: 3px;
-      }
+      } 
 
       #cards .card .symbol,
       #cards .card strong,
       #cards .card a {
         display: none !important;
-      }
+      } 
 
       #cards .card-animal-icon {
         display: block;
@@ -189,7 +189,7 @@
         background: transparent;
         box-sizing: border-box;
         flex: 0 0 auto;
-      }
+      } 
 
       #cards .card-animal-name {
         display: block;
@@ -205,7 +205,7 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-      }
+      } 
 
       @media (max-width: 700px) {
         #song-list .song {
@@ -217,7 +217,7 @@
           padding-bottom: 1px;
           padding-left: 8px;
           padding-right: 8px;
-        }
+        } 
 
         #song-list .song-number {
           left: calc(
@@ -230,222 +230,222 @@
           width: 42px;
           font-size: .9rem;
           z-index: 0 !important;
-        }
+        } 
 
         #song-list .animal-button {
           width: 54px;
           height: 54px;
-        }
+        } 
 
         #song-list .animal-button img {
           width: 50px;
           height: 50px;
-        }
+        } 
 
         #cards {
           grid-template-columns: repeat(2, minmax(0, 1fr));
           gap: 7px;
           margin-top: 0;
           margin-bottom: 18px;
-        }
+        } 
 
         #cards .card {
           padding: 6px 4px;
           border-radius: 10px;
-        }
+        } 
 
         #cards .card-animal-icon {
           width: 76px;
           height: 76px;
           margin-bottom: 4px;
-        }
+        } 
 
         #cards .card-animal-name {
           font-size: .65rem;
         }
-      }
+      } 
 
       @media (max-width: 380px) {
         #cards {
           gap: 5px;
-        }
+        } 
 
         #cards .card {
           padding: 5px 3px;
-        }
+        } 
 
         #cards .card-animal-icon {
           width: 66px;
           height: 66px;
-        }
+        } 
 
         #cards .card-animal-name {
           font-size: .59rem;
         }
       }
-    `;
+    `; 
 
     document.head.appendChild(style);
-  }
+  } 
 
   function iconLabel(filename) {
     return filename
       .replace(/\.[^/.]+$/, "")
       .replace(/[-_]+/g, " ")
       .replace(/\b\w/g, c => c.toUpperCase());
-  }
+  } 
 
   function fallback() {
-    const span = document.createElement("span");
+    const span = document.createElement("span"); 
 
-    span.textContent = FALLBACK_ICON;
+    span.textContent = FALLBACK_ICON; 
 
     span.style.display = "flex";
     span.style.alignItems = "center";
     span.style.justifyContent = "center";
     span.style.fontSize = "2rem";
-    span.style.lineHeight = "1";
+    span.style.lineHeight = "1"; 
 
     return span;
-  }
+  } 
 
   function makeImage(filename) {
     const button = document.createElement("button");
     button.type = "button";
-    button.className = "animal-button";
+    button.className = "animal-button"; 
 
-    const label = iconLabel(filename);
+    const label = iconLabel(filename); 
 
     button.title = label;
-    button.setAttribute("aria-label", label);
+    button.setAttribute("aria-label", label); 
 
-    const img = document.createElement("img");
+    const img = document.createElement("img"); 
 
     img.className = "animal-icon";
     img.alt = label;
     img.loading = "lazy";
-    img.decoding = "async";
+    img.decoding = "async"; 
 
-    img.src = RAW_PREFIX + encodeURIComponent(filename);
+    img.src = RAW_PREFIX + encodeURIComponent(filename); 
 
     img.onerror = () => {
       img.replaceWith(fallback());
-    };
+    }; 
 
-    button.appendChild(img);
+    button.appendChild(img); 
 
     return button;
-  }
+  } 
 
   function songRows() {
     return Array.from(
       document.querySelectorAll("#song-list .song")
     );
-  }
+  } 
 
   function playSongFromRow(row) {
-    if (!row) return;
+    if (!row) return; 
 
-    const playButton = row.querySelector(".play");
+    const playButton = row.querySelector(".play"); 
 
     if (playButton) {
       playButton.click();
     }
-  }
+  } 
 
   function makeSongNumber(row, index) {
-    const oldNumber = row.querySelector(".song-number");
+    const oldNumber = row.querySelector(".song-number"); 
 
-    if (!oldNumber) return;
+    if (!oldNumber) return; 
 
     if (oldNumber.tagName === "A") {
       return;
-    }
+    } 
 
-    const numberLink = document.createElement("a");
+    const numberLink = document.createElement("a"); 
 
     numberLink.className = "song-number";
     numberLink.href = "#";
-    numberLink.textContent = oldNumber.textContent.trim();
+    numberLink.textContent = oldNumber.textContent.trim(); 
 
     numberLink.setAttribute(
       "aria-label",
       `Play song ${index + 1}`
-    );
+    ); 
 
     numberLink.addEventListener("click", event => {
       event.preventDefault();
       playSongFromRow(row);
-    });
+    }); 
 
     oldNumber.replaceWith(numberLink);
-  }
+  } 
 
   function putIcons() {
-    const rows = songRows();
+    const rows = songRows(); 
 
     rows.forEach((row, index) => {
       if (row.querySelector(".animal-button")) {
         return;
-      }
+      } 
 
       const filename =
-        iconFiles[index % iconFiles.length];
+        iconFiles[index % iconFiles.length]; 
 
-      if (!filename) return;
+      if (!filename) return; 
 
-      const icon = makeImage(filename);
+      const icon = makeImage(filename); 
 
-      row.appendChild(icon);
+      row.appendChild(icon); 
 
       icon.addEventListener("click", event => {
         event.preventDefault();
         event.stopPropagation();
         playSongFromRow(row);
-      });
+      }); 
 
       makeSongNumber(row, index);
     });
-  }
+  } 
 
   function getCardSongIndex(card) {
-    const link = card.querySelector("a");
+    const link = card.querySelector("a"); 
 
-    if (!link) return -1;
+    if (!link) return -1; 
 
-    const match = link.textContent.match(/(\d+)/);
+    const match = link.textContent.match(/(\d+)/); 
 
-    if (!match) return -1;
+    if (!match) return -1; 
 
-    const songNumber = Number(match[1]);
+    const songNumber = Number(match[1]); 
 
     if (
       !Number.isInteger(songNumber) ||
       songNumber < 1
     ) {
       return -1;
-    }
+    } 
 
     return songNumber - 1;
-  }
+  } 
 
   function playCard(card) {
-    if (!card) return;
+    if (!card) return; 
 
-    const link = card.querySelector("a");
+    const link = card.querySelector("a"); 
 
-    if (!link) return;
+    if (!link) return; 
 
     if (typeof link.onclick === "function") {
       link.onclick({
         preventDefault() {},
         stopPropagation() {}
-      });
+      }); 
 
       return;
-    }
+    } 
 
-    const songIndex = getCardSongIndex(card);
+    const songIndex = getCardSongIndex(card); 
 
     if (
       songIndex >= 0 &&
@@ -453,22 +453,22 @@
     ) {
       window.play(songIndex);
     }
-  }
+  } 
 
   function makeCardClickable(card) {
-    if (!card) return;
+    if (!card) return; 
 
     if (
       card.dataset.animalCardReady === "true"
     ) {
       return;
-    }
+    } 
 
     card.addEventListener("click", event => {
       event.preventDefault();
       event.stopPropagation();
       playCard(card);
-    });
+    }); 
 
     card.addEventListener("keydown", event => {
       if (
@@ -479,177 +479,173 @@
         event.stopPropagation();
         playCard(card);
       }
-    });
+    }); 
 
     card.setAttribute("role", "button");
     card.setAttribute("tabindex", "0");
     card.setAttribute(
       "aria-label",
       "Play this music reading card"
-    );
+    ); 
 
     card.dataset.animalCardReady = "true";
-  }
+  } 
 
   function addAnimalToCard(card) {
-    if (!card) return;
+    if (!card) return; 
 
-    const songIndex = getCardSongIndex(card);
+    const songIndex = getCardSongIndex(card); 
 
-    if (songIndex < 0) return;
+    if (songIndex < 0) return; 
 
-    const animalFile = iconFiles[songIndex];
+    const animalFile = iconFiles[songIndex]; 
 
-    if (!animalFile) return;
+    if (!animalFile) return; 
 
-    const animalName = iconLabel(animalFile);
+    const animalName = iconLabel(animalFile); 
 
     if (
       card.querySelector(".card-animal-icon")
     ) {
       makeCardClickable(card);
       return;
-    }
+    } 
 
     const symbol = card.querySelector(".symbol");
     const strong = card.querySelector("strong");
-    const link = card.querySelector("a");
+    const link = card.querySelector("a"); 
 
     if (symbol) {
       symbol.style.display = "none";
-    }
+    } 
 
     if (strong) {
       strong.style.display = "none";
-    }
+    } 
 
     if (link) {
       link.style.display = "none";
-    }
+    } 
 
-    const img = document.createElement("img");
+    const img = document.createElement("img"); 
 
-    img.className = "card-animal-icon";
+    img.className = "card-animal-icon"; 
 
     img.src =
       RAW_PREFIX +
-      encodeURIComponent(animalFile);
+      encodeURIComponent(animalFile); 
 
     img.alt = animalName;
     img.title = animalName;
     img.loading = "lazy";
-    img.decoding = "async";
+    img.decoding = "async"; 
 
     img.dataset.songIndex =
-      String(songIndex);
+      String(songIndex); 
 
     img.onerror = () => {
       img.replaceWith(fallback());
-    };
+    }; 
 
-    const name = document.createElement("span");
+    const name = document.createElement("span"); 
 
     name.className = "card-animal-name";
-    name.textContent = animalName;
+    name.textContent = animalName; 
 
     name.dataset.songIndex =
-      String(songIndex);
+      String(songIndex); 
 
     card.appendChild(img);
-    card.appendChild(name);
+    card.appendChild(name); 
 
     makeCardClickable(card);
-  }
+  } 
 
   function addCardIcons() {
-    if (updatingCards) return;
+    if (updatingCards) return; 
 
-    updatingCards = true;
+    updatingCards = true; 
 
     try {
       const cardElements =
-        document.querySelectorAll("#cards .card");
+        document.querySelectorAll("#cards .card"); 
 
       cardElements.forEach(
         card => addAnimalToCard(card)
-      );
+      ); 
 
     } finally {
       updatingCards = false;
     }
-  }
+  } 
 
   function positionReading() {
     const reading =
-      document.getElementById("reading");
+      document.getElementById("reading"); 
 
-    if (!reading) return;
+    if (!reading) return; 
 
     const readingRect =
-      reading.getBoundingClientRect();
+      reading.getBoundingClientRect(); 
 
     const readingDocumentTop =
       window.scrollY +
-      readingRect.top;
+      readingRect.top; 
 
     const readingHeight =
-      readingRect.height;
+      readingRect.height; 
 
     const viewportHeight =
-      window.innerHeight;
+      window.innerHeight; 
 
     const dock =
-      document.querySelector(".player-dock");
+      document.querySelector(".player-dock"); 
 
     const dockHeight =
       dock
         ? dock.getBoundingClientRect().height
-        : 0;
+        : 0; 
 
     const usableHeight =
-      viewportHeight - dockHeight;
+      viewportHeight - dockHeight; 
 
     const targetY =
       readingDocumentTop -
       dockHeight -
-      (usableHeight - readingHeight) / 2;
-
-    // Small extra scroll so mobile browsers have a chance
-    // to collapse the address bar.
-    const browserBarNudge = 90;
+      (usableHeight - readingHeight) / 2; 
 
     window.scrollTo({
-      top: Math.max(0, targetY + browserBarNudge),
+      top: Math.max(0, targetY),
       behavior: "smooth"
     });
-  }
+  } 
 
   function scheduleReadingScroll() {
-    if (scrollScheduled) return;
+    if (scrollScheduled) return; 
 
-    scrollScheduled = true;
+    scrollScheduled = true; 
 
     requestAnimationFrame(() => {
-      scrollScheduled = false;
+      scrollScheduled = false; 
 
       requestAnimationFrame(() => {
         addCardIcons();
         positionReading();
       });
     });
-  }
+  } 
 
   function setupCardWatching() {
     const cards =
-      document.getElementById("cards");
+      document.getElementById("cards"); 
 
-    if (!cards) return;
+    if (!cards) return; 
 
     const observer =
       new MutationObserver(
-        mutations => {
+        mutations => { 
 
-          let newCards = false;
+          let newCards = false; 
 
           for (const mutation of mutations) {
             if (
@@ -659,16 +655,16 @@
               newCards = true;
               break;
             }
-          }
+          } 
 
-          if (!newCards) return;
+          if (!newCards) return; 
 
           if (!updatingCards) {
             addCardIcons();
             scheduleReadingScroll();
           }
         }
-      );
+      ); 
 
     observer.observe(
       cards,
@@ -676,10 +672,10 @@
         childList: true,
         subtree: true
       }
-    );
+    ); 
 
     addCardIcons();
-  }
+  } 
 
   async function getAnimalFiles() {
     try {
@@ -692,22 +688,22 @@
                 "application/vnd.github+json"
             }
           }
-        );
+        ); 
 
       if (!response.ok) {
         throw new Error(
           `GitHub API error: ${response.status}`
         );
-      }
+      } 
 
       const data =
-        await response.json();
+        await response.json(); 
 
       if (!Array.isArray(data)) {
         throw new Error(
           "Unexpected GitHub API response."
         );
-      }
+      } 
 
       return data
         .filter(
@@ -728,37 +724,37 @@
         .sort(
           (a, b) =>
             a.localeCompare(b)
-        );
+        ); 
 
     } catch (error) {
       console.error(
         "Unable to load animal icons:",
         error
-      );
+      ); 
 
       return [];
     }
-  }
+  } 
 
   async function init() {
-    addStyles();
+    addStyles(); 
 
-    setupCardWatching();
+    setupCardWatching(); 
 
     iconFiles =
-      await getAnimalFiles();
+      await getAnimalFiles(); 
 
     if (!iconFiles.length) {
       console.warn(
         "No animal icon files were found."
-      );
+      ); 
 
       return;
-    }
+    } 
 
     putIcons();
     addCardIcons();
-  }
+  } 
 
   if (
     document.readyState ===
@@ -771,6 +767,6 @@
     );
   } else {
     init();
-  }
+  } 
 
 })();

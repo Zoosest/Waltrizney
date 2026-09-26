@@ -13,10 +13,10 @@
     const style = document.createElement("style");
     style.id = "animal-icon-styles";
     style.textContent = `
-      /* Keep each row inside the viewport: the animal is on the right. */
+      /* Keep the song number on the left and the animal on the right. */
       #song-list .song {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 52px;
+        grid-template-columns: 28px minmax(0, 1fr) auto;
         gap: 10px;
         width: 100%;
         min-width: 0;
@@ -25,29 +25,31 @@
       #song-list .song-number { display: none; }
       #song-list .song .play { display: none; }
       .song-number-button {
-        display: grid;
-        place-items: center;
+        align-self: center;
+        justify-self: start;
         padding: 0;
-        border: 1px solid var(--gold, #d4af37);
-        border-radius: 10px;
-        background: #000;
-        cursor: pointer;
-        overflow: hidden;
-        font-weight: bold;
+        border: 0;
+        background: transparent;
         color: var(--gold, #d4af37);
-        font-size: 1rem;
+        cursor: pointer;
+        font: inherit;
+        font-weight: bold;
+        line-height: 1;
       }
       .song-number-button:focus-visible {
         outline: 2px solid var(--bright-gold, #f5d76e);
         outline-offset: 2px;
       }
-      .song-number-button:hover { background: #261334; }
+      .song-number-button:hover { color: var(--bright-gold, #f5d76e); }
       .song-animal-button {
         display: grid;
         place-items: center;
-        width: 52px;
-        height: 52px;
-        min-width: 0;
+        align-self: stretch;
+        width: 64px;
+        min-width: 64px;
+        min-height: 52px;
+        height: 100%;
+        aspect-ratio: 1;
         padding: 0;
         border: 1px solid var(--gold, #d4af37);
         border-radius: 10px;
@@ -61,15 +63,17 @@
       }
       .song-animal-button:hover { background: #261334; }
       .song-animal-icon, .song-animal-fallback {
-        width: 48px;
-        height: 48px;
-        flex: 0 0 48px;
+        width: 100%;
+        height: 100%;
+        min-width: 0;
+        min-height: 0;
         object-fit: contain;
         border-radius: 8px;
         background: #000;
         padding: 2px;
+        box-sizing: border-box;
       }
-      .song-animal-fallback { display: grid; place-items: center; font-size: 1.9rem; }
+      .song-animal-fallback { display: grid; place-items: center; font-size: 2.1rem; }
       .song-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .song-title small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       #cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
@@ -79,9 +83,9 @@
       .card-animal-icon { display: block; width: 112px; height: 112px; margin: 0 auto 6px; object-fit: contain; border-radius: 12px; background: #000; padding: 0; }
       .card-animal-fallback { display: block; width: 112px; height: 112px; margin: 0 auto 6px; padding-top: 28px; box-sizing: border-box; text-align: center; font-size: 3rem; line-height: 1; background: #000; }
       @media (max-width: 640px) {
-        #song-list .song { grid-template-columns: minmax(0, 1fr) 46px; gap: 8px; padding: 8px; }
-        .song-animal-button { width: 46px; height: 46px; }
-        .song-animal-icon, .song-animal-fallback { width: 42px; height: 42px; flex-basis: 42px; }
+        #song-list .song { grid-template-columns: 22px minmax(0, 1fr) auto; gap: 8px; padding: 8px; }
+        .song-animal-button { width: 52px; min-width: 52px; min-height: 46px; }
+        .song-animal-fallback { font-size: 1.8rem; }
         #cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
         #cards .card { padding: 8px 5px; }
         .card-animal-icon, .card-animal-fallback { width: 82px; height: 82px; }
@@ -141,12 +145,9 @@
   function putIcons() {
     songRows().forEach((row, index) => {
       if (row.querySelector(".song-number-button")) return;
-      const songNumber = index + 1;
       const icon = iconFiles.length ? makeImage(iconFiles[index % iconFiles.length], "song-animal-icon") : fallback();
-      const numberButton = makeNumberButton(row, songNumber);
-      const iconButton = makePlayButton(row, icon);
-      row.prepend(numberButton);
-      row.append(iconButton);
+      row.prepend(makeNumberButton(row, index + 1));
+      row.append(makePlayButton(row, icon));
     });
   }
 

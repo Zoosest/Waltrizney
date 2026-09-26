@@ -38,11 +38,10 @@
       text-align:center;
     }
 
-    .donate {
+    .donate,
+    .context {
       position:absolute;
-      top:50%;
-      left:14px;
-      transform:translateY(-50%);
+      top:7px;
       border:1px solid var(--gold);
       border-radius:999px;
       padding:5px 9px;
@@ -50,20 +49,15 @@
       background:#160c1c;
       font-size:.68rem;
       text-decoration:none;
+      line-height:1;
+    }
+
+    .donate {
+      left:10px;
     }
 
     .context {
-      position:absolute;
-      top:50%;
-      left:50%;
-      transform:translate(-50%,-50%);
-      border:1px solid var(--gold);
-      border-radius:999px;
-      padding:5px 9px;
-      color:var(--bright-gold);
-      background:#160c1c;
-      font-size:.68rem;
-      text-decoration:none;
+      left:88px;
     }
 
     .logo-img {
@@ -275,13 +269,19 @@
         min-height:72px;
       }
 
+      .donate,
+      .context {
+        top:6px;
+        padding:5px 8px;
+        font-size:.63rem;
+      }
+
       .donate {
-        top:50%;
-        left:10px;
+        left:8px;
       }
 
       .context {
-        top:50%;
+        left:75px;
       }
 
       .logo-img {

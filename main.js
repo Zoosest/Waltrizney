@@ -31,8 +31,7 @@
 
         display: grid;
 
-        /* Only song content + animal button are inside
-           the purple row. */
+        /* Song text + animal button */
         grid-template-columns: minmax(0, 1fr) 62px;
 
         gap: 10px;
@@ -42,23 +41,32 @@
 
         align-items: center;
 
-        /* Make the purple box tighter vertically */
+        /* Keep the row height you liked */
         padding-top: 2px;
         padding-bottom: 2px;
+
+        /* Give the animal button a little room
+           inside the right edge */
+        padding-right: 6px;
+
+        box-sizing: border-box;
       }
 
 
       /* =========================================================
          GOLD NUMBER
-         OUTSIDE THE PURPLE BOX
+         OUTSIDE THE PURPLE ROW
          ========================================================= */
 
       #song-list .song-number {
         position: absolute;
 
-        /* Push number completely outside
-           the LEFT side of the purple row */
-        left: -42px;
+        /*
+         * IMPORTANT:
+         * Keep the entire number visible.
+         * It sits just to the LEFT of the purple row.
+         */
+        left: -32px;
 
         top: 50%;
 
@@ -66,7 +74,7 @@
 
         display: block;
 
-        width: 30px;
+        width: 26px;
 
         color: var(--gold, #d4af37);
 
@@ -79,6 +87,7 @@
         text-decoration: none;
 
         font-weight: 700;
+
         font-size: 0.9rem;
 
         line-height: 1;
@@ -88,6 +97,8 @@
 
         text-align: right;
 
+        white-space: nowrap;
+
         cursor: pointer;
 
         z-index: 5;
@@ -96,7 +107,6 @@
 
       #song-list .song-number:hover {
         color: var(--bright-gold, #f5d76e);
-
         text-decoration: none;
       }
 
@@ -148,7 +158,10 @@
 
         box-sizing: border-box;
 
+        /* Keep it inside the purple row */
         justify-self: end;
+
+        margin-right: 2px;
       }
 
 
@@ -164,8 +177,7 @@
       }
 
 
-      /* Keep the animal artwork at the size
-         you just approved. */
+      /* Keep the animal artwork at the size you liked */
 
       .song-animal-icon,
       .song-animal-fallback {
@@ -322,18 +334,19 @@
 
           gap: 8px;
 
-          /* Tight purple box */
           padding-top: 1px;
           padding-bottom: 1px;
+
+          padding-right: 5px;
         }
 
 
-        /* Number stays OUTSIDE the purple box */
+        /* Full number remains visible */
 
         #song-list .song-number {
-          left: -35px;
+          left: -27px;
 
-          width: 25px;
+          width: 23px;
 
           font-size: 0.8rem;
 
@@ -341,7 +354,7 @@
         }
 
 
-        /* Keep approved animal size */
+        /* Animal button */
 
         .song-animal-button {
           width: 54px;
@@ -353,6 +366,8 @@
           padding: 1px;
 
           border-radius: 8px;
+
+          margin-right: 1px;
         }
 
 

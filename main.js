@@ -61,21 +61,26 @@
         position: absolute;
 
         /*
-         * The purple row begins 58px from the left.
+         * The purple box begins 58px from the
+         * left edge of the song-list area.
          *
-         * The number is placed in the BLACK space
-         * between the left edge of the screen and
-         * the purple box.
+         * This number area now fills that entire
+         * 58px black gutter, so the number is
+         * centered perfectly inside it.
          */
-        left: -60px;
+        left: -58px;
 
         top: 50%;
 
         transform: translateY(-50%);
 
-        display: block;
+        display: flex;
 
-        width: 42px;
+        align-items: center;
+
+        justify-content: center;
+
+        width: 58px;
 
         color: var(--gold, #d4af37);
 
@@ -96,13 +101,15 @@
         padding: 0;
         margin: 0;
 
-        text-align: right;
+        text-align: center;
 
         white-space: nowrap;
 
         cursor: pointer;
 
         z-index: 20;
+
+        box-sizing: border-box;
       }
 
 
@@ -216,7 +223,7 @@
          SONG TEXT
          ========================================================= */
 
-      .song-title {
+      #song-list .song-title {
         min-width: 0;
 
         overflow: hidden;
@@ -224,15 +231,31 @@
         text-overflow: ellipsis;
 
         white-space: nowrap;
+
+        align-self: center;
+
+        display: block;
+
+        text-align: left;
+
+        line-height: 1.2;
+
+        box-sizing: border-box;
       }
 
 
-      .song-title small {
+      #song-list .song-title small {
+        display: block;
+
         overflow: hidden;
 
         text-overflow: ellipsis;
 
         white-space: nowrap;
+
+        margin-top: 3px;
+
+        line-height: 1.2;
       }
 
 
@@ -342,6 +365,8 @@
           padding-bottom: 1px;
           padding-right: 0;
           padding-left: 0;
+
+          align-items: center;
         }
 
 
@@ -350,16 +375,61 @@
         #song-list .song-number {
 
           /*
-           * Center the number in the black
-           * space to the left of the purple box.
+           * The mobile purple box begins 42px
+           * into the song-list area.
+           *
+           * The number fills that entire gutter
+           * and is centered inside it.
            */
-          left: -40px;
+          left: -42px;
 
-          width: 32px;
+          width: 42px;
+
+          display: flex;
+
+          align-items: center;
+
+          justify-content: center;
+
+          text-align: center;
 
           font-size: 0.9rem;
 
-          text-align: right;
+          box-sizing: border-box;
+        }
+
+
+        /* SONG TEXT */
+
+        #song-list .song-title {
+
+          align-self: center;
+
+          display: block;
+
+          text-align: left;
+
+          line-height: 1.2;
+
+          min-width: 0;
+
+          overflow: hidden;
+        }
+
+
+        #song-list .song-title small {
+
+          display: block;
+
+          margin-top: 3px;
+
+          line-height: 1.2;
+
+          overflow: hidden;
+
+          text-overflow: ellipsis;
+
+          white-space: nowrap;
         }
 
 
@@ -1070,3 +1140,4 @@
   }
 
 })();
+

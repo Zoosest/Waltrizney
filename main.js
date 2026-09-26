@@ -32,22 +32,25 @@
         display: grid;
 
         /* Song text + animal button */
-        grid-template-columns: minmax(0, 1fr) 62px;
+        grid-template-columns:
+          minmax(0, 1fr) 62px;
 
         gap: 10px;
 
-        width: 100%;
+        width: calc(100% - 58px);
+
         min-width: 0;
+
+        margin-left: 58px;
 
         align-items: center;
 
-        /* Keep the row height you liked */
+        /* Keep the rows short */
         padding-top: 2px;
         padding-bottom: 2px;
 
-        /* Give the animal button a little room
-           inside the right edge */
-        padding-right: 6px;
+        /* Animal button reaches the right edge */
+        padding-right: 0;
 
         box-sizing: border-box;
       }
@@ -55,18 +58,16 @@
 
       /* =========================================================
          GOLD NUMBER
-         OUTSIDE THE PURPLE ROW
          ========================================================= */
 
       #song-list .song-number {
         position: absolute;
 
         /*
-         * IMPORTANT:
-         * Keep the entire number visible.
-         * It sits just to the LEFT of the purple row.
+         * Number lives in the BLACK space to the left
+         * of the purple song box.
          */
-        left: -32px;
+        left: -48px;
 
         top: 50%;
 
@@ -74,7 +75,7 @@
 
         display: block;
 
-        width: 26px;
+        width: 38px;
 
         color: var(--gold, #d4af37);
 
@@ -88,7 +89,8 @@
 
         font-weight: 700;
 
-        font-size: 0.9rem;
+        /* Slightly larger */
+        font-size: 1rem;
 
         line-height: 1;
 
@@ -101,12 +103,13 @@
 
         cursor: pointer;
 
-        z-index: 5;
+        z-index: 10;
       }
 
 
       #song-list .song-number:hover {
         color: var(--bright-gold, #f5d76e);
+
         text-decoration: none;
       }
 
@@ -158,10 +161,10 @@
 
         box-sizing: border-box;
 
-        /* Keep it inside the purple row */
+        /* Push animal all the way to the RIGHT */
         justify-self: end;
 
-        margin-right: 2px;
+        margin-right: 0;
       }
 
 
@@ -177,7 +180,7 @@
       }
 
 
-      /* Keep the animal artwork at the size you liked */
+      /* Animal artwork stays at the size you liked */
 
       .song-animal-icon,
       .song-animal-fallback {
@@ -329,34 +332,46 @@
       @media (max-width: 640px) {
 
         #song-list .song {
+
           grid-template-columns:
             minmax(0, 1fr) 54px;
 
           gap: 8px;
 
+          /*
+           * Wider black area on the left
+           * for the song numbers.
+           */
+          width: calc(100% - 42px);
+
+          margin-left: 42px;
+
+          /* Keep row short */
           padding-top: 1px;
           padding-bottom: 1px;
 
-          padding-right: 5px;
+          padding-right: 0;
         }
 
 
-        /* Full number remains visible */
+        /* GOLD NUMBER */
 
         #song-list .song-number {
-          left: -27px;
 
-          width: 23px;
+          left: -36px;
 
-          font-size: 0.8rem;
+          width: 30px;
+
+          font-size: 0.9rem;
 
           text-align: right;
         }
 
 
-        /* Animal button */
+        /* ANIMAL BUTTON */
 
         .song-animal-button {
+
           width: 54px;
           height: 54px;
 
@@ -367,12 +382,13 @@
 
           border-radius: 8px;
 
-          margin-right: 1px;
+          margin-right: 0;
         }
 
 
         .song-animal-icon,
         .song-animal-fallback {
+
           width: 50px;
           height: 50px;
 
@@ -393,6 +409,7 @@
            ===================================================== */
 
         #cards {
+
           grid-template-columns:
             repeat(2, minmax(0, 1fr));
 
@@ -407,12 +424,14 @@
 
         .card-animal-icon,
         .card-animal-fallback {
+
           width: 82px;
           height: 82px;
         }
 
 
         .card-animal-fallback {
+
           padding-top: 20px;
 
           font-size: 2.3rem;
@@ -541,22 +560,33 @@
     row,
     index
   ) {
+
+    /*
+     * Use a real link so the number itself is
+     * clickable and plays that song.
+     */
+
     const number =
       document.createElement("a");
+
 
     number.className =
       "song-number";
 
+
     number.href =
       "#";
 
+
     number.textContent =
       String(index + 1);
+
 
     number.setAttribute(
       "aria-label",
       `Play song ${index + 1}`
     );
+
 
     number.title =
       `Play song ${index + 1}`;
@@ -568,8 +598,11 @@
 
         event.preventDefault();
 
+
         row
-          .querySelector(".play")
+          .querySelector(
+            ".play"
+          )
           ?.click();
 
       }
@@ -588,24 +621,30 @@
     row,
     icon
   ) {
+
     const button =
       document.createElement(
         "button"
       );
 
+
     button.type =
       "button";
 
+
     button.className =
       "song-animal-button";
+
 
     button.setAttribute(
       "aria-label",
       "Play song"
     );
 
+
     button.title =
       "Play song";
+
 
     button.append(
       icon
@@ -617,7 +656,9 @@
       () => {
 
         row
-          .querySelector(".play")
+          .querySelector(
+            ".play"
+          )
           ?.click();
 
       }
@@ -637,7 +678,8 @@
     songRows().forEach(
       (row, index) => {
 
-        /* Add 1–177 */
+
+        /* Add song number */
 
         if (
           !row.querySelector(
@@ -678,7 +720,7 @@
             : fallback();
 
 
-        /* Animal stays on RIGHT */
+        /* Animal goes on the far RIGHT */
 
         row.append(
           makePlayButton(

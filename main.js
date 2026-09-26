@@ -350,7 +350,7 @@
 
     if (playButton) {
       playButton.click();
-    } 
+    }
   } 
 
   function makeSongNumber(row, index) {
@@ -426,7 +426,7 @@
       return -1;
     } 
 
-    return songNumber - 1; 
+    return songNumber - 1;
   } 
 
   function playCard(card) {
@@ -452,7 +452,7 @@
       typeof window.play === "function"
     ) {
       window.play(songIndex);
-    } 
+    }
   } 
 
   function makeCardClickable(card) {
@@ -576,7 +576,7 @@
 
     } finally {
       updatingCards = false;
-    } 
+    }
   } 
 
   function positionReading() {
@@ -609,16 +609,10 @@
     const usableHeight =
       viewportHeight - dockHeight; 
 
-    const mobileBrowserAdjustment =
-      window.innerWidth <= 700
-        ? 72
-        : 0;
-
     const targetY =
       readingDocumentTop -
       dockHeight -
-      (usableHeight - readingHeight) / 2 +
-      mobileBrowserAdjustment; 
+      (usableHeight - readingHeight) / 2; 
 
     window.scrollTo({
       top: Math.max(0, targetY),
@@ -759,7 +753,7 @@
     } 
 
     putIcons();
-    addCardIcons(); 
+    addCardIcons();
   } 
 
   if (
@@ -770,7 +764,7 @@
       "DOMContentLoaded",
       init,
       { once: true }
-    ); 
+    );
   } else {
     init();
   } 

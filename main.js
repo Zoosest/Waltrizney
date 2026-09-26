@@ -1,4 +1,4 @@
-/* Add numbered song rows and animal icons to every song row and tarot card. */
+/* Add numbered song links and animal icons to every song row and tarot card. */
 (() => {
   "use strict";
 
@@ -54,18 +54,20 @@
 
 
       /* =========================================================
-         GOLD NUMBER
+         GOLD SONG NUMBER
          ========================================================= */
 
       #song-list .song-number {
         position: absolute;
 
         /*
-         * Put the number farther LEFT so it sits
-         * centered in the black space between the
-         * left edge of the screen and the purple box.
+         * The purple row begins 58px from the left.
+         *
+         * The number is placed in the BLACK space
+         * between the left edge of the screen and
+         * the purple box.
          */
-        left: -54px;
+        left: -60px;
 
         top: 50%;
 
@@ -100,7 +102,7 @@
 
         cursor: pointer;
 
-        z-index: 10;
+        z-index: 20;
       }
 
 
@@ -348,9 +350,10 @@
         #song-list .song-number {
 
           /*
-           * Move numbers farther LEFT on phones too.
+           * Center the number in the black
+           * space to the left of the purple box.
            */
-          left: -42px;
+          left: -40px;
 
           width: 32px;
 
@@ -538,66 +541,32 @@
   function songRows() {
     return [
       ...document.querySelectorAll(
-        "#song-list .song, .song"
+        "#song-list .song"
       )
     ];
   }
 
 
   /* =========================================================
-     PLAY THE SONG IN THE MEDIA PLAYER
+     PLAY SONG FROM ROW
      ========================================================= */
 
   function playSongFromRow(row) {
 
     /*
-     * First try the site's existing play button.
-     * This is the safest way to use the same player
-     * behavior already built into the website.
+     * The original index.html creates a .play button
+     * for every row. Its onclick calls play(index),
+     * which is exactly what we want.
      */
     const playButton =
-      row.querySelector(".play");
+      row.querySelector(
+        ".play"
+      );
+
 
     if (playButton) {
 
       playButton.click();
-
-      return true;
-    }
-
-
-    /*
-     * Backup: some versions of the song rows may
-     * have the YouTube link directly on the row.
-     */
-    const songLink =
-      row.querySelector(
-        'a[href*="youtu.be"], a[href*="youtube.com"]'
-      );
-
-    if (songLink) {
-
-      songLink.click();
-
-      return true;
-    }
-
-
-    /*
-     * Backup for rows that store the URL in a
-     * data attribute.
-     */
-    const videoUrl =
-      row.dataset.youtube ||
-      row.dataset.url ||
-      row.getAttribute("data-video");
-
-    if (
-      videoUrl &&
-      typeof window.playSong === "function"
-    ) {
-
-      window.playSong(videoUrl);
 
       return true;
     }
@@ -608,7 +577,7 @@
 
 
   /* =========================================================
-     SONG NUMBER
+     CONVERT SONG NUMBER INTO PLAYABLE LINK
      ========================================================= */
 
   function makeSongNumber(
@@ -616,48 +585,115 @@
     index
   ) {
 
-    const number =
-      document.createElement("a");
+    /*
+     * index.html already creates:
+     *
+     * <span class="song-number">1</span>
+     *
+     * So instead of creating another number,
+     * convert that existing span into an <a>.
+     */
+    let number =
+      row.querySelector(
+        ".song-number"
+      );
 
 
-    number.className =
-      "song-number";
+    if (
+      number &&
+      number.tagName.toLowerCase() !== "a"
+    ) {
+
+      const link =
+        document.createElement("a");
+
+      link.className =
+        "song-number";
+
+      link.textContent =
+        String(index + 1);
+
+      link.href =
+        "#";
+
+      link.setAttribute(
+        "aria-label",
+        `Play song ${index + 1}`
+      );
+
+      link.title =
+        `Play song ${index + 1}`;
+
+
+      number.replaceWith(
+        link
+      );
+
+
+      number =
+        link;
+
+    }
 
 
     /*
-     * Keep it technically a link so it behaves
-     * like a clickable song link.
+     * If a number doesn't exist for some reason,
+     * create one.
      */
-    number.href =
-      "#";
+    if (!number) {
+
+      number =
+        document.createElement("a");
+
+      number.className =
+        "song-number";
+
+      number.textContent =
+        String(index + 1);
+
+      number.href =
+        "#";
+
+      number.setAttribute(
+        "aria-label",
+        `Play song ${index + 1}`
+      );
+
+      number.title =
+        `Play song ${index + 1}`;
+
+      row.prepend(
+        number
+      );
+
+    }
 
 
-    number.textContent =
-      String(index + 1);
+    /*
+     * Make sure the click handler exists only once.
+     */
+    if (
+      number.dataset.playHandler !== "true"
+    ) {
+
+      number.dataset.playHandler =
+        "true";
 
 
-    number.setAttribute(
-      "aria-label",
-      `Play song ${index + 1}`
-    );
+      number.addEventListener(
+        "click",
+        event => {
 
+          event.preventDefault();
 
-    number.title =
-      `Play song ${index + 1}`;
+          event.stopPropagation();
 
+          playSongFromRow(row);
 
-    number.addEventListener(
-      "click",
-      event => {
+        }
+      );
 
-        event.preventDefault();
-
-        event.stopPropagation();
-
-        playSongFromRow(row);
-
-      }
-    );
+    }
 
 
     return number;
@@ -729,27 +765,19 @@
     songRows().forEach(
       (row, index) => {
 
-
-        /* Add song number */
-
-        if (
-          !row.querySelector(
-            ".song-number"
-          )
-        ) {
-
-          row.prepend(
-            makeSongNumber(
-              row,
-              index
-            )
-          );
-
-        }
+        /*
+         * Convert the EXISTING number from index.html
+         * into a playable link.
+         */
+        makeSongNumber(
+          row,
+          index
+        );
 
 
-        /* Don't add animal twice */
-
+        /*
+         * Don't add animal twice.
+         */
         if (
           row.querySelector(
             ".song-animal-button"
@@ -771,8 +799,9 @@
             : fallback();
 
 
-        /* Animal stays on the far RIGHT */
-
+        /*
+         * Animal stays on the far RIGHT.
+         */
         row.append(
           makePlayButton(
             row,

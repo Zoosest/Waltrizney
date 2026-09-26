@@ -36,14 +36,12 @@
       padding:10px 14px 10px;
       min-height:90px;
       text-align:center;
-      display:flex;
-      align-items:center;
     }
 
     .donate {
       position:absolute;
       top:10px;
-      right:12px;
+      right:14px;
       border:1px solid var(--gold);
       border-radius:999px;
       padding:5px 9px;
@@ -68,10 +66,14 @@
     }
 
     .logo-img {
+      position:absolute;
+      top:50%;
+      left:0;
+      transform:translateY(-50%);
       width:140px;
       height:75px;
       object-fit:contain;
-      margin-right:auto;
+      object-position:left center;
     }
 
     h1,
@@ -281,8 +283,12 @@
       }
 
       .logo-img {
+        top:50%;
+        left:0;
+        transform:translateY(-50%);
         width:120px;
         height:68px;
+        object-position:left center;
       }
 
       h1 {

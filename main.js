@@ -207,9 +207,7 @@
       }
 
 
-      /*
-        The entire card is the button.
-      */
+      /* THE ENTIRE CARD IS CLICKABLE */
 
       #cards .card {
         min-width: 0;
@@ -253,7 +251,6 @@
         -webkit-tap-highlight-color: transparent;
       }
 
-
       #cards .card:hover {
         background:
           linear-gradient(
@@ -268,11 +265,9 @@
         transform: translateY(-2px);
       }
 
-
       #cards .card:active {
         transform: translateY(0);
       }
-
 
       #cards .card:focus-visible {
         outline:
@@ -283,17 +278,14 @@
       }
 
 
-      /*
-        The original card contents are hidden.
-        The original link is retained internally
-        so the working shuffle/play system
-        remains untouched.
-      */
+      /* =========================================
+         HIDE ORIGINAL CARD CONTENT
+         ========================================= */
 
       #cards .card .symbol,
       #cards .card strong,
       #cards .card a {
-        display: none;
+        display: none !important;
       }
 
 
@@ -488,7 +480,7 @@
 
 
   /* =========================================
-     FALLBACK
+     FALLBACK ICON
      ========================================= */
 
   function fallback() {
@@ -507,7 +499,7 @@
 
 
   /* =========================================
-     MAKE ANIMAL IMAGE
+     MAKE SONG ROW ANIMAL
      ========================================= */
 
   function makeImage(filename) {
@@ -626,24 +618,7 @@
 
 
   /* =========================================
-     PLAY BUTTON
-     ========================================= */
-
-  function makePlayButton(row) {
-    const button =
-      row.querySelector(".play");
-
-    if (!button) return;
-
-    button.setAttribute(
-      "aria-label",
-      "Play this song"
-    );
-  }
-
-
-  /* =========================================
-     SONG ROW ANIMAL ICONS
+     SONG ROWS
      ========================================= */
 
   function putIcons() {
@@ -680,27 +655,15 @@
       );
 
       makeSongNumber(row, index);
-      makePlayButton(row);
     });
   }
 
 
   /* =========================================
-     FIND SONG NUMBER FROM CARD
+     GET SHUFFLED SONG POSITION
      ========================================= */
 
   function getCardSongIndex(card) {
-
-    /*
-      The working index.html creates a link such as:
-
-      Play song 47
-
-      Play song 183
-
-      The number identifies the actual
-      shuffled song.
-    */
 
     const link =
       card.querySelector("a");
@@ -727,10 +690,71 @@
 
 
   /* =========================================
-     TURN CARD INTO FULL BUTTON
+     PLAY CARD
      ========================================= */
 
-  function makeCardClickable(card, originalLink) {
+  function playCard(card) {
+
+    if (!card) return;
+
+    const link =
+      card.querySelector("a");
+
+    if (!link) return;
+
+
+    /*
+      IMPORTANT:
+
+      We DO NOT use link.click() here.
+
+      link.click() would bubble back into
+      the card and trigger this function again.
+
+      Instead, we directly call the existing
+      onclick function that index.html created.
+
+      That preserves the shuffled card's
+      actual position in the Music Reading.
+    */
+
+    if (typeof link.onclick === "function") {
+
+      link.onclick({
+        preventDefault() {},
+        stopPropagation() {}
+      });
+
+      return;
+    }
+
+
+    /*
+      Emergency fallback.
+
+      If the original onclick somehow isn't
+      available, use the actual song index.
+    */
+
+    const songIndex =
+      getCardSongIndex(card);
+
+    if (
+      songIndex >= 0 &&
+      typeof window.play === "function"
+    ) {
+      window.play(songIndex);
+    }
+  }
+
+
+  /* =========================================
+     MAKE ENTIRE CARD CLICKABLE
+     ========================================= */
+
+  function makeCardClickable(card) {
+
+    if (!card) return;
 
     if (
       card.dataset.animalCardReady === "true"
@@ -738,36 +762,16 @@
       return;
     }
 
-    if (!originalLink) return;
-
-
-    /*
-      THIS IS THE IMPORTANT PART.
-
-      We keep a reference to the original
-      link created by index.html.
-
-      Its click handler already knows how
-      to call playPosition() correctly.
-
-      We don't try to recreate that logic.
-      We simply trigger the original link.
-    */
-
-    const activate = event => {
-
-      if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-
-      originalLink.click();
-    };
-
 
     card.addEventListener(
       "click",
-      activate
+      event => {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        playCard(card);
+      }
     );
 
 
@@ -781,8 +785,9 @@
         ) {
 
           event.preventDefault();
+          event.stopPropagation();
 
-          activate(event);
+          playCard(card);
         }
       }
     );
@@ -800,7 +805,7 @@
 
     card.setAttribute(
       "aria-label",
-      "Play this music reading"
+      "Play this music reading card"
     );
 
 
@@ -810,17 +815,19 @@
 
 
   /* =========================================
-     ADD ANIMAL TO ONE CARD
+     ADD ANIMAL TO CARD
      ========================================= */
 
   function addAnimalToCard(card) {
 
     if (!card) return;
 
+
     const songIndex =
       getCardSongIndex(card);
 
     if (songIndex < 0) return;
+
 
     const animalFile =
       iconFiles[songIndex];
@@ -828,47 +835,12 @@
     if (!animalFile) return;
 
 
-    /*
-      SAVE THE ORIGINAL PLAY LINK BEFORE
-      WE REMOVE IT FROM THE VISUAL CARD.
-    */
-
-    const originalLink =
-      card.querySelector("a");
-
-    if (!originalLink) return;
-
-
     const animalName =
       iconLabel(animalFile);
 
 
     /*
-      Don't rebuild an already-correct card.
-    */
-
-    const existing =
-      card.querySelector(
-        ".card-animal-icon"
-      );
-
-    if (
-      existing &&
-      existing.dataset.songIndex ===
-        String(songIndex)
-    ) {
-
-      makeCardClickable(
-        card,
-        originalLink
-      );
-
-      return;
-    }
-
-
-    /*
-      Remove old visual contents.
+      Remove anything we previously created.
     */
 
     card
@@ -885,11 +857,11 @@
 
 
     /*
-      Hide the original card contents
-      rather than destroying the link.
+      Hide the original contents.
 
-      The link remains in the DOM and
-      retains its working click handler.
+      We keep the original link alive
+      because its onclick contains the
+      actual shuffled-song logic.
     */
 
     const symbol =
@@ -897,6 +869,9 @@
 
     const strong =
       card.querySelector("strong");
+
+    const link =
+      card.querySelector("a");
 
 
     if (symbol) {
@@ -907,12 +882,14 @@
       strong.style.display = "none";
     }
 
-    originalLink.style.display = "none";
+    if (link) {
+      link.style.display = "none";
+    }
 
 
-    /*
-      Create animal image.
-    */
+    /* =========================================
+       CREATE ANIMAL IMAGE
+       ========================================= */
 
     const img =
       document.createElement("img");
@@ -944,9 +921,9 @@
     };
 
 
-    /*
-      Create animal name.
-    */
+    /* =========================================
+       CREATE ANIMAL NAME
+       ========================================= */
 
     const name =
       document.createElement("span");
@@ -961,32 +938,19 @@
       String(songIndex);
 
 
-    /*
-      Put animal + name at the beginning.
-    */
+    /* =========================================
+       PUT ANIMAL + NAME INTO CARD
+       ========================================= */
 
-    card.insertBefore(
-      img,
-      card.firstChild
-    );
-
-    card.insertBefore(
-      name,
-      img.nextSibling
-    );
+    card.appendChild(img);
+    card.appendChild(name);
 
 
-    /*
-      Make the entire card clickable.
+    /* =========================================
+       MAKE WHOLE CARD CLICKABLE
+       ========================================= */
 
-      The ORIGINAL link is what actually
-      plays the shuffled song.
-    */
-
-    makeCardClickable(
-      card,
-      originalLink
-    );
+    makeCardClickable(card);
   }
 
 
@@ -1002,12 +966,12 @@
 
     try {
 
-      const cards =
+      const cardElements =
         document.querySelectorAll(
           "#cards .card"
         );
 
-      cards.forEach(
+      cardElements.forEach(
         card => addAnimalToCard(card)
       );
 
@@ -1032,38 +996,43 @@
     if (!reading) return;
 
 
-    /*
-      The gold line is the bottom border
-      of the "Your Music Reading" heading.
-
-      We position that line near the top
-      of the visible area so the six cards
-      drop down cleanly underneath it.
-    */
-
     const heading =
       reading.querySelector("h2");
 
-    if (!heading) {
-      reading.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-
-      return;
-    }
+    if (!heading) return;
 
 
-    const rect =
+    /*
+      The gold line is the bottom border
+      of "Your Music Reading".
+
+      Put that gold line immediately
+      below the sticky player.
+    */
+
+    const dock =
+      document.querySelector(
+        ".player-dock"
+      );
+
+    const dockHeight =
+      dock
+        ? dock.getBoundingClientRect().height
+        : 0;
+
+
+    const headingRect =
       heading.getBoundingClientRect();
 
     const goldLineY =
-      rect.bottom;
+      window.scrollY +
+      headingRect.bottom;
+
 
     const targetY =
-      window.scrollY +
       goldLineY -
-      4;
+      dockHeight -
+      2;
 
 
     window.scrollTo({
@@ -1074,7 +1043,7 @@
 
 
   /* =========================================
-     WATCH CARDS + CARDS BUTTON
+     WATCH CARDS
      ========================================= */
 
   function setupCardWatching() {
@@ -1089,7 +1058,11 @@
       const observer =
         new MutationObserver(
           () => {
-            addCardIcons();
+
+            if (!updatingCards) {
+              addCardIcons();
+            }
+
           }
         );
 
@@ -1103,14 +1076,9 @@
     }
 
 
-    /*
-      The actual CARDS shuffle remains in
-      index.html.
-
-      We only wait for it to finish,
-      then position the newly opened
-      reading area.
-    */
+    /* =======================================
+       CARDS BUTTON
+       ======================================= */
 
     const drawCards =
       document.getElementById(
@@ -1123,6 +1091,15 @@
         "click",
         () => {
 
+          /*
+            index.html does the actual
+            six-song shuffle first.
+
+            Then we decorate those exact
+            six cards with the matching
+            animal icons.
+          */
+
           setTimeout(
             () => {
 
@@ -1131,7 +1108,7 @@
               positionReading();
 
             },
-            80
+            120
           );
 
         }
@@ -1159,6 +1136,7 @@
           }
         );
 
+
       if (!response.ok) {
 
         throw new Error(
@@ -1166,8 +1144,10 @@
         );
       }
 
+
       const data =
         await response.json();
+
 
       if (!Array.isArray(data)) {
 
@@ -1176,6 +1156,7 @@
         );
       }
 
+
       return data
         .filter(
           item =>
@@ -1183,7 +1164,8 @@
             item.type === "file"
         )
         .map(
-          item => item.name
+          item =>
+            item.name
         )
         .filter(
           name =>
@@ -1233,18 +1215,7 @@
     }
 
 
-    /*
-      Add animals to chronological
-      song rows.
-    */
-
     putIcons();
-
-
-    /*
-      Add animals to cards if they
-      already exist.
-    */
 
     addCardIcons();
   }

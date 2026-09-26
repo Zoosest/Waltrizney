@@ -41,7 +41,7 @@
     .donate {
       position:absolute;
       top:10px;
-      left:10px;
+      right:10px;
       border:1px solid var(--gold);
       border-radius:999px;
       padding:5px 9px;
@@ -68,7 +68,7 @@
     .logo-img {
       position:absolute;
       top:7px;
-      right:0;
+      left:0;
       width:140px;
       height:75px;
       object-fit:contain;
@@ -273,7 +273,7 @@
 
       .donate {
         top:8px;
-        left:8px;
+        right:8px;
       }
 
       .context {
@@ -282,7 +282,7 @@
 
       .logo-img {
         top:3px;
-        right:0;
+        left:0;
         width:120px;
         height:68px;
       }
@@ -334,6 +334,13 @@
 <body>
 
   <section class="top-area">
+
+    <img
+      src="./assets/rizney.png"
+      alt="Rizney"
+      class="logo-img"
+    />
+
     <a
       class="donate"
       href="https://venmo.com/u/YOUR_VENMO_USERNAME"
@@ -343,11 +350,6 @@
 
     <a class="context" href="context.html">✦ Context</a>
 
-    <img
-      src="./assets/rizney.png"
-      alt="Rizney"
-      class="logo-img"
-    />
   </section>
 
   <section class="player-dock">
@@ -369,6 +371,7 @@
   </nav>
 
   <main>
+
     <p class="intro">
       Browse the collection in order, or let the cards choose a song for you.
     </p>
@@ -382,6 +385,7 @@
       <h2>Chronological</h2>
       <div id="song-list"></div>
     </section>
+
   </main>
 
   <footer>

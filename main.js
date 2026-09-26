@@ -591,15 +591,18 @@
     const readingRect =
       reading.getBoundingClientRect();
 
-    const dockBottom =
+    const dockHeight =
       dock
-        ? dock.getBoundingClientRect().bottom
+        ? dock.getBoundingClientRect().height
         : 0;
 
-    const targetY =
+    const readingDocumentTop =
       window.scrollY +
-      readingRect.top -
-      dockBottom;
+      readingRect.top;
+
+    const targetY =
+      readingDocumentTop -
+      dockHeight;
 
     window.scrollTo({
       top: Math.max(0, targetY),

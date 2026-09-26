@@ -614,8 +614,12 @@
       dockHeight -
       (usableHeight - readingHeight) / 2;
 
+    // Small extra scroll so mobile browsers have a chance
+    // to collapse the address bar.
+    const browserBarNudge = 90;
+
     window.scrollTo({
-      top: Math.max(0, targetY),
+      top: Math.max(0, targetY + browserBarNudge),
       behavior: "smooth"
     });
   }

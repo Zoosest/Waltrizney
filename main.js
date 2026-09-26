@@ -580,29 +580,42 @@
   }
 
   function positionReading() {
-    const reading =
-      document.getElementById("reading");
+    const cards =
+      document.getElementById("cards");
 
-    if (!reading) return;
+    if (!cards) return;
+
+    const cardsRect =
+      cards.getBoundingClientRect();
+
+    const cardsDocumentTop =
+      window.scrollY +
+      cardsRect.top;
+
+    const cardsDocumentBottom =
+      window.scrollY +
+      cardsRect.bottom;
+
+    const cardsCenter =
+      (cardsDocumentTop + cardsDocumentBottom) / 2;
+
+    const viewportHeight =
+      window.innerHeight;
 
     const dock =
       document.querySelector(".player-dock");
-
-    const readingRect =
-      reading.getBoundingClientRect();
 
     const dockHeight =
       dock
         ? dock.getBoundingClientRect().height
         : 0;
 
-    const readingDocumentTop =
-      window.scrollY +
-      readingRect.top;
+    const usableViewportHeight =
+      viewportHeight - dockHeight;
 
     const targetY =
-      readingDocumentTop -
-      dockHeight;
+      cardsCenter -
+      (usableViewportHeight / 2);
 
     window.scrollTo({
       top: Math.max(0, targetY),

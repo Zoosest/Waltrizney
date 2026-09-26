@@ -1,13 +1,18 @@
-/* Add one uploaded animal icon to every song row and its tarot card. */
+/* Add numbered song rows and animal icons to every song row and tarot card. */
 (() => {
   "use strict";
 
-  const API_URL = "https://api.github.com/repos/the-zeusest/waltrizney-/contents/assets/animal-icons?ref=main";
-  const RAW_PREFIX = "https://raw.githubusercontent.com/the-zeusest/waltrizney-/main/assets/animal-icons/";
+  const API_URL =
+    "https://api.github.com/repos/the-zeusest/waltrizney-/contents/assets/animal-icons?ref=main";
+
+  const RAW_PREFIX =
+    "https://raw.githubusercontent.com/the-zeusest/waltrizney-/main/assets/animal-icons/";
+
   const FALLBACK_ICON = "🐾";
 
   let iconFiles = [];
   let updatingCards = false;
+
 
   function addStyles() {
     if (document.getElementById("animal-icon-styles")) return;
@@ -16,39 +21,94 @@
     style.id = "animal-icon-styles";
 
     style.textContent = `
-      /* SONG ROWS */
+
+      /* =========================================================
+         SONG ROWS
+         ========================================================= */
 
       #song-list .song {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 52px;
+        grid-template-columns: 34px minmax(0, 1fr) 62px;
         gap: 10px;
         width: 100%;
         min-width: 0;
         align-items: center;
       }
 
+
+      /* GOLD SONG NUMBERS ON THE LEFT */
+
       #song-list .song-number {
-        display: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 34px;
+        min-width: 34px;
+
+        color: var(--gold, #d4af37);
+        background: transparent;
+
+        border: 0;
+        outline: 0;
+        box-shadow: none;
+
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.9rem;
+        line-height: 1;
+
+        padding: 0;
+        margin: 0;
+
+        cursor: pointer;
       }
+
+      #song-list .song-number:hover {
+        color: var(--bright-gold, #f5d76e);
+        text-decoration: none;
+      }
+
+      #song-list .song-number:focus-visible {
+        color: var(--bright-gold, #f5d76e);
+        outline: 1px solid var(--bright-gold, #f5d76e);
+        outline-offset: 3px;
+      }
+
+
+      /* Hide the original play button.
+         The animal button handles playing the song. */
 
       #song-list .song .play {
         display: none;
       }
 
-      /* Animal button stays compact and square on the RIGHT. */
+
+      /* =========================================================
+         ANIMAL BUTTON ON THE RIGHT
+         ========================================================= */
+
       .song-animal-button {
         display: grid;
         place-items: center;
-        width: 52px;
-        height: 52px;
-        min-width: 52px;
-        min-height: 52px;
+
+        width: 62px;
+        height: 62px;
+
+        min-width: 62px;
+        min-height: 62px;
+
         padding: 1px;
+
         border: 1px solid var(--gold, #d4af37);
         border-radius: 10px;
+
         background: #000;
+
         cursor: pointer;
         overflow: hidden;
+
+        box-sizing: border-box;
       }
 
       .song-animal-button:focus-visible {
@@ -60,29 +120,46 @@
         background: #261334;
       }
 
-      /* PNG fills the square button without being stretched. */
+
+      /* Make the actual animal image fill the button
+         while remaining perfectly square. */
+
       .song-animal-icon,
       .song-animal-fallback {
         display: block;
-        width: 48px;
-        height: 48px;
+
+        width: 58px;
+        height: 58px;
+
         max-width: 100%;
         max-height: 100%;
+
         object-fit: contain;
+
         border-radius: 8px;
+
         background: #000;
+
         padding: 0;
+        margin: 0;
+
+        box-sizing: border-box;
       }
 
       .song-animal-fallback {
         display: grid;
         place-items: center;
-        font-size: 1.9rem;
+
+        font-size: 2rem;
         line-height: 1;
       }
 
+
+      /* SONG TEXT */
+
       .song-title {
         min-width: 0;
+
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -95,7 +172,9 @@
       }
 
 
-      /* TAROT / MUSIC READING CARDS */
+      /* =========================================================
+         TAROT / MUSIC READING CARDS
+         ========================================================= */
 
       #cards {
         display: grid;
@@ -106,8 +185,11 @@
       #cards .card {
         min-height: 0;
         height: auto;
+
         padding: 10px 8px;
+
         background: #000;
+
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -122,63 +204,104 @@
         margin: 0 0 4px;
       }
 
+
       .card-animal-icon {
         display: block;
+
         width: 112px;
         height: 112px;
+
         margin: 0 auto 6px;
+
         object-fit: contain;
+
         border-radius: 12px;
+
         background: #000;
+
         padding: 0;
       }
 
       .card-animal-fallback {
         display: block;
+
         width: 112px;
         height: 112px;
+
         margin: 0 auto 6px;
+
         padding-top: 28px;
+
         box-sizing: border-box;
+
         text-align: center;
+
         font-size: 3rem;
         line-height: 1;
+
         background: #000;
+
         border-radius: 12px;
       }
 
 
-      /* MOBILE */
+      /* =========================================================
+         MOBILE
+         ========================================================= */
 
       @media (max-width: 640px) {
 
         #song-list .song {
-          grid-template-columns: minmax(0, 1fr) 46px;
+          grid-template-columns: 28px minmax(0, 1fr) 54px;
           gap: 8px;
+
           padding: 8px;
         }
 
+
+        /* Smaller gold number column */
+
+        #song-list .song-number {
+          width: 28px;
+          min-width: 28px;
+
+          font-size: 0.8rem;
+        }
+
+
+        /* Larger animal button while still fitting
+           comfortably inside the purple row */
+
         .song-animal-button {
-          width: 46px;
-          height: 46px;
-          min-width: 46px;
-          min-height: 46px;
+          width: 54px;
+          height: 54px;
+
+          min-width: 54px;
+          min-height: 54px;
+
           padding: 1px;
+
           border-radius: 8px;
         }
 
+
         .song-animal-icon,
         .song-animal-fallback {
-          width: 42px;
-          height: 42px;
+          width: 50px;
+          height: 50px;
+
           max-width: 100%;
           max-height: 100%;
+
           border-radius: 6px;
         }
 
         .song-animal-fallback {
-          font-size: 1.7rem;
+          font-size: 1.8rem;
         }
+
+
+        /* Cards */
 
         #cards {
           grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -206,6 +329,10 @@
   }
 
 
+  /* =========================================================
+     ANIMAL FILE NAME -> DISPLAY NAME
+     ========================================================= */
+
   function iconLabel(filename) {
     return filename
       .replace(/\.(png|jpe?g|webp|gif)$/i, "")
@@ -214,29 +341,52 @@
   }
 
 
+  /* =========================================================
+     FALLBACK ICON
+     ========================================================= */
+
   function fallback(className = "song-animal-fallback") {
     const element = document.createElement("span");
 
     element.className = className;
     element.textContent = FALLBACK_ICON;
-    element.setAttribute("aria-label", "Animal icon");
+
+    element.setAttribute(
+      "aria-label",
+      "Animal icon"
+    );
 
     return element;
   }
 
 
+  /* =========================================================
+     MAKE ANIMAL IMAGE
+     ========================================================= */
+
   function makeImage(file, className) {
     const image = document.createElement("img");
 
     image.className = className;
-    image.src = RAW_PREFIX + encodeURIComponent(file.name);
-    image.alt = iconLabel(file.name);
+
+    image.src =
+      RAW_PREFIX +
+      encodeURIComponent(file.name);
+
+    image.alt =
+      iconLabel(file.name);
+
     image.loading = "lazy";
     image.decoding = "async";
 
     image.onerror = () => {
       image.replaceWith(
-        fallback(className.replace("-icon", "-fallback"))
+        fallback(
+          className.replace(
+            "-icon",
+            "-fallback"
+          )
+        )
       );
     };
 
@@ -244,127 +394,287 @@
   }
 
 
+  /* =========================================================
+     FIND SONG ROWS
+     ========================================================= */
+
   function songRows() {
     return [
-      ...document.querySelectorAll("#song-list .song, .song")
+      ...document.querySelectorAll(
+        "#song-list .song, .song"
+      )
     ];
   }
 
 
+  /* =========================================================
+     SONG NUMBER
+     ========================================================= */
+
+  function makeSongNumber(row, index) {
+    const number =
+      document.createElement("a");
+
+    number.className =
+      "song-number";
+
+    number.href = "#";
+
+    number.textContent =
+      String(index + 1);
+
+    number.setAttribute(
+      "aria-label",
+      `Play song ${index + 1}`
+    );
+
+    number.title =
+      `Play song ${index + 1}`;
+
+    number.addEventListener(
+      "click",
+      event => {
+        event.preventDefault();
+
+        row
+          .querySelector(".play")
+          ?.click();
+      }
+    );
+
+    return number;
+  }
+
+
+  /* =========================================================
+     ANIMAL PLAY BUTTON
+     ========================================================= */
+
   function makePlayButton(row, icon) {
-    const button = document.createElement("button");
+    const button =
+      document.createElement("button");
 
     button.type = "button";
-    button.className = "song-animal-button";
-    button.setAttribute("aria-label", "Play song");
-    button.title = "Play song";
+
+    button.className =
+      "song-animal-button";
+
+    button.setAttribute(
+      "aria-label",
+      "Play song"
+    );
+
+    button.title =
+      "Play song";
 
     button.append(icon);
 
-    button.addEventListener("click", () => {
-      row.querySelector(".play")?.click();
-    });
+    button.addEventListener(
+      "click",
+      () => {
+        row
+          .querySelector(".play")
+          ?.click();
+      }
+    );
 
     return button;
   }
 
 
+  /* =========================================================
+     ADD NUMBERS + ANIMAL ICONS
+     ========================================================= */
+
   function putIcons() {
-    songRows().forEach((row, index) => {
 
-      if (row.querySelector(".song-animal-button")) {
-        return;
-      }
+    songRows().forEach(
+      (row, index) => {
 
-      const icon = iconFiles.length
-        ? makeImage(
-            iconFiles[index % iconFiles.length],
-            "song-animal-icon"
-          )
-        : fallback();
-
-      /*
-       * Append instead of prepend.
-       * This puts the animal button on the RIGHT side of the row.
-       */
-      row.append(
-        makePlayButton(row, icon)
-      );
-    });
-  }
-
-
-  function addCardIcons() {
-    if (updatingCards) return;
-
-    updatingCards = true;
-
-    try {
-      const rows = songRows();
-
-      document.querySelectorAll("#cards .card").forEach(card => {
-
-        const link = card.querySelector("a");
-        const match = link?.textContent.match(/(\d+)/);
-        const songIndex = match ? Number(match[1]) - 1 : -1;
-
-        const animalFile = iconFiles[songIndex];
-        const heading = card.querySelector("strong");
-
-        const label = animalFile
-          ? iconLabel(animalFile.name)
-          : "Animal";
-
-        if (heading && heading.textContent !== label) {
-          heading.textContent = label;
-        }
-
-        card.querySelector(".symbol")?.remove();
+        /* Add 1–177 down the LEFT side */
 
         if (
-          card.querySelector(
-            ".card-animal-icon, .card-animal-fallback"
+          !row.querySelector(
+            ".song-number"
+          )
+        ) {
+          row.prepend(
+            makeSongNumber(
+              row,
+              index
+            )
+          );
+        }
+
+
+        /* Don't add the animal twice */
+
+        if (
+          row.querySelector(
+            ".song-animal-button"
           )
         ) {
           return;
         }
 
-        const rowIcon =
-          rows[songIndex]?.querySelector(
-            ".song-animal-icon, .song-animal-fallback"
-          );
 
-        const icon = rowIcon
-          ? rowIcon.cloneNode(true)
-          : animalFile
+        const icon =
+          iconFiles.length
             ? makeImage(
-                animalFile,
-                "card-animal-icon"
+                iconFiles[
+                  index %
+                  iconFiles.length
+                ],
+                "song-animal-icon"
               )
-            : fallback(
-                "card-animal-fallback"
+            : fallback();
+
+
+        /* Animal goes on the RIGHT */
+
+        row.append(
+          makePlayButton(
+            row,
+            icon
+          )
+        );
+      }
+    );
+  }
+
+
+  /* =========================================================
+     TAROT CARD ANIMAL ICONS
+     ========================================================= */
+
+  function addCardIcons() {
+
+    if (updatingCards) return;
+
+    updatingCards = true;
+
+    try {
+
+      const rows =
+        songRows();
+
+
+      document
+        .querySelectorAll(
+          "#cards .card"
+        )
+        .forEach(card => {
+
+          const link =
+            card.querySelector("a");
+
+          const match =
+            link?.textContent.match(
+              /(\d+)/
+            );
+
+          const songIndex =
+            match
+              ? Number(match[1]) - 1
+              : -1;
+
+
+          const animalFile =
+            iconFiles[songIndex];
+
+          const heading =
+            card.querySelector(
+              "strong"
+            );
+
+
+          const label =
+            animalFile
+              ? iconLabel(
+                  animalFile.name
+                )
+              : "Animal";
+
+
+          if (
+            heading &&
+            heading.textContent !==
+              label
+          ) {
+            heading.textContent =
+              label;
+          }
+
+
+          card
+            .querySelector(".symbol")
+            ?.remove();
+
+
+          if (
+            card.querySelector(
+              ".card-animal-icon, .card-animal-fallback"
+            )
+          ) {
+            return;
+          }
+
+
+          const rowIcon =
+            rows[songIndex]
+              ?.querySelector(
+                ".song-animal-icon, .song-animal-fallback"
               );
 
-        icon.className = rowIcon
-          ? "card-animal-icon"
-          : icon.className;
 
-        card.prepend(icon);
-      });
+          const icon =
+            rowIcon
+              ? rowIcon.cloneNode(true)
+              : animalFile
+                ? makeImage(
+                    animalFile,
+                    "card-animal-icon"
+                  )
+                : fallback(
+                    "card-animal-fallback"
+                  );
+
+
+          icon.className =
+            rowIcon
+              ? "card-animal-icon"
+              : icon.className;
+
+
+          card.prepend(icon);
+        });
+
 
     } finally {
+
       updatingCards = false;
+
     }
   }
 
+
+  /* =========================================================
+     INITIALIZE
+     ========================================================= */
 
   async function init() {
 
     addStyles();
 
-    const cards = document.getElementById("cards");
+
+    const cards =
+      document.getElementById(
+        "cards"
+      );
+
 
     if (cards) {
+
       new MutationObserver(
         addCardIcons
       ).observe(
@@ -374,40 +684,54 @@
           subtree: true
         }
       );
+
     }
+
+
+    /* Load animal icons from GitHub */
 
     try {
 
-      const response = await fetch(
-        API_URL,
-        {
-          headers: {
-            Accept: "application/vnd.github+json"
+      const response =
+        await fetch(
+          API_URL,
+          {
+            headers: {
+              Accept:
+                "application/vnd.github+json"
+            }
           }
-        }
-      );
+        );
+
 
       if (!response.ok) {
+
         throw new Error(
           `Icon list request failed: ${response.status}`
         );
+
       }
 
-      iconFiles = (await response.json())
-        .filter(
-          file =>
-            file &&
-            file.type === "file" &&
-            /\.(png|jpe?g|webp|gif)$/i.test(
-              file.name
-            )
-        )
-        .sort(
-          (a, b) =>
-            a.name.localeCompare(
-              b.name
-            )
-        );
+
+      iconFiles =
+        (await response.json())
+
+          .filter(
+            file =>
+              file &&
+              file.type === "file" &&
+              /\.(png|jpe?g|webp|gif)$/i.test(
+                file.name
+              )
+          )
+
+          .sort(
+            (a, b) =>
+              a.name.localeCompare(
+                b.name
+              )
+          );
+
 
     } catch (error) {
 
@@ -418,12 +742,22 @@
 
     }
 
+
     putIcons();
+
     addCardIcons();
+
   }
 
 
-  if (document.readyState === "loading") {
+  /* =========================================================
+     START
+     ========================================================= */
+
+  if (
+    document.readyState ===
+    "loading"
+  ) {
 
     document.addEventListener(
       "DOMContentLoaded",

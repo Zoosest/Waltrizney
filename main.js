@@ -41,7 +41,6 @@
         padding-top: 2px;
         padding-bottom: 2px;
 
-        /* Clean breathing room inside purple box */
         padding-left: 10px;
         padding-right: 10px;
 
@@ -93,11 +92,6 @@
 
         cursor: pointer;
 
-        /*
-          IMPORTANT:
-          Keep numbers behind expandable
-          game/dropdown elements.
-        */
         z-index: 0 !important;
 
         box-sizing: border-box;
@@ -195,35 +189,87 @@
 
 
       /* =========================================
-         MUSIC READING CARDS
+         MUSIC READING / SIX CARD AREA
          ========================================= */
 
       #cards {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 12px;
+
+        grid-template-columns:
+          repeat(3, minmax(0, 1fr));
+
+        gap: 10px;
+
+        width: 100%;
+        max-width: 100%;
+
+        box-sizing: border-box;
       }
 
       #cards .card {
         min-width: 0;
+
         box-sizing: border-box;
+
+        overflow: hidden;
       }
 
-      /*
-        Animal copied from the corresponding
-        song row.
-      */
+
+      /* =========================================
+         CARD ANIMAL ICON
+         ========================================= */
 
       #cards .card-animal-icon {
-        width: 112px;
-        height: 112px;
+        width: 92px;
+        height: 92px;
 
         display: block;
 
         object-fit: contain;
         object-position: center;
 
-        margin: 0 auto;
+        margin: 0 auto 4px auto;
+
+        box-sizing: border-box;
+      }
+
+
+      /* =========================================
+         ALSO SUPPORT OTHER CARD CONTAINERS
+         ========================================= */
+
+      #card-results {
+        display: grid;
+
+        grid-template-columns:
+          repeat(3, minmax(0, 1fr));
+
+        gap: 10px;
+
+        width: 100%;
+        max-width: 100%;
+
+        box-sizing: border-box;
+      }
+
+      #card-results .card,
+      #card-results .music-card {
+        min-width: 0;
+        overflow: hidden;
+        box-sizing: border-box;
+      }
+
+      #card-results .card-animal-icon,
+      #card-results .music-card .card-animal-icon {
+        width: 92px;
+        height: 92px;
+
+        display: block;
+
+        object-fit: contain;
+        object-position: center;
+
+        margin: 0 auto 4px auto;
 
         box-sizing: border-box;
       }
@@ -236,7 +282,9 @@
       @media (max-width: 700px) {
 
         #song-list .song {
-          grid-template-columns: minmax(0, 1fr) 54px;
+          grid-template-columns:
+            minmax(0, 1fr) 54px;
+
           gap: 8px;
 
           width: calc(100% - 42px);
@@ -320,17 +368,27 @@
         }
 
 
-        /* Mobile cards */
+        /* Mobile six-card reading */
 
-        #cards {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 10px;
+        #cards,
+        #card-results {
+          grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+          gap: 8px;
+
+          width: 100%;
+          max-width: 100%;
         }
 
 
-        #cards .card-animal-icon {
-          width: 82px;
-          height: 82px;
+        #cards .card-animal-icon,
+        #card-results .card-animal-icon,
+        #card-results .music-card .card-animal-icon {
+          width: 70px;
+          height: 70px;
+
+          margin-bottom: 2px;
         }
       }
     `;
@@ -380,6 +438,7 @@
     button.className = "animal-button";
 
     button.title = iconLabel(filename);
+
     button.setAttribute(
       "aria-label",
       iconLabel(filename)
@@ -388,7 +447,9 @@
     const img = document.createElement("img");
 
     img.className = "animal-icon";
+
     img.alt = iconLabel(filename);
+
     img.loading = "lazy";
 
     img.src =
@@ -410,7 +471,9 @@
 
   function songRows() {
     return Array.from(
-      document.querySelectorAll("#song-list .song")
+      document.querySelectorAll(
+        "#song-list .song"
+      )
     );
   }
 
@@ -465,6 +528,7 @@
       "click",
       event => {
         event.preventDefault();
+
         playSongFromRow(row);
       }
     );
@@ -500,7 +564,9 @@
     rows.forEach((row, index) => {
 
       if (
-        row.querySelector(".animal-button")
+        row.querySelector(
+          ".animal-button"
+        )
       ) {
         return;
       }
@@ -518,6 +584,7 @@
       icon.addEventListener(
         "click",
         event => {
+
           event.preventDefault();
           event.stopPropagation();
 
@@ -526,37 +593,141 @@
       );
 
       makeSongNumber(row, index);
+
       makePlayButton(row);
     });
   }
 
 
   /* =========================================
-     MUSIC READING CARD ANIMAL ICONS
+     GET CARD TITLE
+     ========================================= */
+
+  function getCardText(card) {
+
+    /*
+      Get all visible text from the card.
+      This lets us identify which song the
+      random card represents.
+    */
+
+    return (
+      card.textContent ||
+      ""
+    )
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
+  }
+
+
+  /* =========================================
+     FIND MATCHING SONG ROW
+     ========================================= */
+
+  function findMatchingSongRow(card, rows) {
+
+    const cardText =
+      getCardText(card);
+
+    if (!cardText) return null;
+
+
+    /*
+      First try the song title itself.
+    */
+
+    for (const row of rows) {
+
+      const title =
+        row.querySelector(
+          ".song-title"
+        );
+
+      if (!title) continue;
+
+      const titleText =
+        title.childNodes[0] &&
+        title.childNodes[0].textContent
+          ? title.childNodes[0]
+              .textContent
+              .replace(/^♫\s*/, "")
+              .trim()
+              .toLowerCase()
+          : title.textContent
+              .replace(/\s*YouTube video.*$/i, "")
+              .replace(/^♫\s*/, "")
+              .trim()
+              .toLowerCase();
+
+      if (
+        titleText &&
+        cardText.includes(titleText)
+      ) {
+        return row;
+      }
+    }
+
+
+    /*
+      Second pass:
+      compare larger pieces of the row text.
+    */
+
+    for (const row of rows) {
+
+      const rowText =
+        (
+          row.querySelector(
+            ".song-title"
+          )?.textContent ||
+          ""
+        )
+          .replace(/\s+/g, " ")
+          .replace(/^♫\s*/, "")
+          .trim()
+          .toLowerCase();
+
+      if (
+        rowText.length > 4 &&
+        cardText.includes(rowText)
+      ) {
+        return row;
+      }
+    }
+
+
+    return null;
+  }
+
+
+  /* =========================================
+     ADD MATCHING ANIMAL TO CARDS
      ========================================= */
 
   function addCardIcons() {
 
-    const rows = songRows();
+    const rows =
+      songRows();
 
-    /*
-      Find the actual cards.
+    if (!rows.length) return;
 
-      We support the card containers used by
-      the page without changing their structure.
-    */
 
-    const cards = Array.from(
-      document.querySelectorAll(
-        "#cards .card, #card-results .music-card, #card-results .card"
-      )
-    );
+    const cards =
+      Array.from(
+        document.querySelectorAll(
+          "#cards .card, #card-results .card, #card-results .music-card"
+        )
+      );
 
-    cards.forEach((card, index) => {
+
+    if (!cards.length) return;
+
+
+    cards.forEach(card => {
 
       /*
-        Don't add another icon if this card
-        already has one.
+        Don't duplicate icons.
       */
 
       if (
@@ -567,44 +738,69 @@
         return;
       }
 
-      const row = rows[index];
-
-      if (!row) return;
 
       /*
-        Use the EXACT animal image already
-        working on the corresponding song row.
+        IMPORTANT:
+        Find the actual song represented
+        by this RANDOM card.
+      */
+
+      const matchingRow =
+        findMatchingSongRow(
+          card,
+          rows
+        );
+
+
+      if (!matchingRow) {
+        return;
+      }
+
+
+      /*
+        Get the animal image from the
+        matching song row.
       */
 
       const rowImage =
-        row.querySelector(
+        matchingRow.querySelector(
           ".animal-button img"
         );
 
-      if (!rowImage) return;
+
+      if (!rowImage) {
+        return;
+      }
+
 
       const img =
         document.createElement("img");
 
+
       img.className =
         "card-animal-icon";
 
+
       img.src =
         rowImage.src;
+
 
       img.alt =
         rowImage.alt ||
         "Animal";
 
+
       img.title =
         rowImage.alt ||
         "Animal";
 
+
       img.loading = "lazy";
 
+
       /*
-        Put the animal at the beginning
-        of the card.
+        Put the animal at the top of
+        the card.
       */
 
       card.insertBefore(
@@ -612,6 +808,63 @@
         card.firstChild
       );
     });
+  }
+
+
+  /* =========================================
+     WATCH FOR RANDOM CARDS
+     ========================================= */
+
+  function watchForCards() {
+
+    /*
+      The CARDS button creates the six cards
+      after the page has already loaded.
+
+      So watch the page for the cards appearing.
+    */
+
+    const observer =
+      new MutationObserver(
+        () => {
+
+          addCardIcons();
+
+        }
+      );
+
+
+    observer.observe(
+      document.body,
+      {
+        childList: true,
+        subtree: true
+      }
+    );
+
+
+    /*
+      Also try periodically for the first
+      few seconds after startup.
+    */
+
+    let attempts = 0;
+
+    const timer =
+      setInterval(
+        () => {
+
+          addCardIcons();
+
+          attempts++;
+
+          if (attempts >= 20) {
+            clearInterval(timer);
+          }
+
+        },
+        250
+      );
   }
 
 
@@ -626,34 +879,49 @@
       const response =
         await fetch(API_URL);
 
+
       if (!response.ok) {
+
         throw new Error(
           `GitHub API error: ${response.status}`
         );
+
       }
+
 
       const data =
         await response.json();
 
+
       if (!Array.isArray(data)) {
+
         throw new Error(
           "Unexpected GitHub API response."
         );
+
       }
 
+
       return data
+
         .filter(
           item =>
             item &&
             item.type === "file"
         )
+
         .map(
-          item => item.name
+          item =>
+            item.name
         )
+
         .filter(
           name =>
-            /\.(png|jpg|jpeg|webp)$/i.test(name)
+            /\.(png|jpg|jpeg|webp)$/i.test(
+              name
+            )
         )
+
         .sort(
           (a, b) =>
             a.localeCompare(b)
@@ -679,8 +947,10 @@
 
     addStyles();
 
+
     const files =
       await getAnimalFiles();
+
 
     if (!files.length) {
 
@@ -691,18 +961,27 @@
       return;
     }
 
-    putIcons(files);
 
     /*
-      Wait one tiny moment so the song-row
-      animal images definitely exist before
-      copying them to the cards.
+      Add animals to the main song list.
     */
 
-    setTimeout(
-      addCardIcons,
-      100
-    );
+    putIcons(files);
+
+
+    /*
+      Start watching for the random
+      six-card Music Reading.
+    */
+
+    watchForCards();
+
+
+    /*
+      Try once immediately too.
+    */
+
+    addCardIcons();
   }
 
 

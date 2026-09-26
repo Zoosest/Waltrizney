@@ -31,7 +31,6 @@
 
         display: grid;
 
-        /* Song text + animal button */
         grid-template-columns:
           minmax(0, 1fr) 62px;
 
@@ -45,12 +44,10 @@
 
         align-items: center;
 
-        /* Keep the rows short */
         padding-top: 2px;
         padding-bottom: 2px;
-
-        /* Animal button reaches the right edge */
         padding-right: 0;
+        padding-left: 0;
 
         box-sizing: border-box;
       }
@@ -64,10 +61,11 @@
         position: absolute;
 
         /*
-         * Number lives in the BLACK space to the left
-         * of the purple song box.
+         * Put the number farther LEFT so it sits
+         * centered in the black space between the
+         * left edge of the screen and the purple box.
          */
-        left: -48px;
+        left: -54px;
 
         top: 50%;
 
@@ -75,7 +73,7 @@
 
         display: block;
 
-        width: 38px;
+        width: 42px;
 
         color: var(--gold, #d4af37);
 
@@ -89,7 +87,6 @@
 
         font-weight: 700;
 
-        /* Slightly larger */
         font-size: 1rem;
 
         line-height: 1;
@@ -161,7 +158,6 @@
 
         box-sizing: border-box;
 
-        /* Push animal all the way to the RIGHT */
         justify-self: end;
 
         margin-right: 0;
@@ -179,8 +175,6 @@
         background: #261334;
       }
 
-
-      /* Animal artwork stays at the size you liked */
 
       .song-animal-icon,
       .song-animal-fallback {
@@ -338,19 +332,14 @@
 
           gap: 8px;
 
-          /*
-           * Wider black area on the left
-           * for the song numbers.
-           */
           width: calc(100% - 42px);
 
           margin-left: 42px;
 
-          /* Keep row short */
           padding-top: 1px;
           padding-bottom: 1px;
-
           padding-right: 0;
+          padding-left: 0;
         }
 
 
@@ -358,9 +347,12 @@
 
         #song-list .song-number {
 
-          left: -36px;
+          /*
+           * Move numbers farther LEFT on phones too.
+           */
+          left: -42px;
 
-          width: 30px;
+          width: 32px;
 
           font-size: 0.9rem;
 
@@ -553,6 +545,69 @@
 
 
   /* =========================================================
+     PLAY THE SONG IN THE MEDIA PLAYER
+     ========================================================= */
+
+  function playSongFromRow(row) {
+
+    /*
+     * First try the site's existing play button.
+     * This is the safest way to use the same player
+     * behavior already built into the website.
+     */
+    const playButton =
+      row.querySelector(".play");
+
+    if (playButton) {
+
+      playButton.click();
+
+      return true;
+    }
+
+
+    /*
+     * Backup: some versions of the song rows may
+     * have the YouTube link directly on the row.
+     */
+    const songLink =
+      row.querySelector(
+        'a[href*="youtu.be"], a[href*="youtube.com"]'
+      );
+
+    if (songLink) {
+
+      songLink.click();
+
+      return true;
+    }
+
+
+    /*
+     * Backup for rows that store the URL in a
+     * data attribute.
+     */
+    const videoUrl =
+      row.dataset.youtube ||
+      row.dataset.url ||
+      row.getAttribute("data-video");
+
+    if (
+      videoUrl &&
+      typeof window.playSong === "function"
+    ) {
+
+      window.playSong(videoUrl);
+
+      return true;
+    }
+
+
+    return false;
+  }
+
+
+  /* =========================================================
      SONG NUMBER
      ========================================================= */
 
@@ -560,11 +615,6 @@
     row,
     index
   ) {
-
-    /*
-     * Use a real link so the number itself is
-     * clickable and plays that song.
-     */
 
     const number =
       document.createElement("a");
@@ -574,6 +624,10 @@
       "song-number";
 
 
+    /*
+     * Keep it technically a link so it behaves
+     * like a clickable song link.
+     */
     number.href =
       "#";
 
@@ -598,12 +652,9 @@
 
         event.preventDefault();
 
+        event.stopPropagation();
 
-        row
-          .querySelector(
-            ".play"
-          )
-          ?.click();
+        playSongFromRow(row);
 
       }
     );
@@ -653,13 +704,13 @@
 
     button.addEventListener(
       "click",
-      () => {
+      event => {
 
-        row
-          .querySelector(
-            ".play"
-          )
-          ?.click();
+        event.preventDefault();
+
+        event.stopPropagation();
+
+        playSongFromRow(row);
 
       }
     );
@@ -720,7 +771,7 @@
             : fallback();
 
 
-        /* Animal goes on the far RIGHT */
+        /* Animal stays on the far RIGHT */
 
         row.append(
           makePlayButton(
